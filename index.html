@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Free Image Dithering</title>
+    <meta name="description" content="A tool for dither images" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/unifont@5.1.0/index.min.css" />
+    <script src="https://unpkg.com/default-passive-events"></script>
+  </head>
+  <body class="display-flex top-bottom-flow" style="gap: 8px">
+    <div class="display-flex top-bottom-flow" style="gap: 15px">
+      <span
+        class="glowfire text-align-center vertical-align-top-margin color font-weight-bold"
+        style="font-size: 175px"
+        data-text="$title"></span>
+      <!--<span class="text-align-center font-weight-bold" style="font-size: 25px" data-text="$subtitle"></span>-->
+      <div class="firehr"></div>
+    </div>
+    <div class="display-flex left-right-flow width-fit-content" style="gap: 15px">
+      <div class="display-flex top-bottom-flow" style="gap: 12px">
+        <span class="font-weight-bold" style="font-size: 20px" data-text="$upload"></span>
+        <input
+          type="file"
+          id="uploadFile"
+          class="height-fit-content"
+          title=".png, .jpg, .jpeg, .webp, .gif, .ico, .bmp, .avif"
+          accept=".png, .jpg, .jpeg, .webp, .gif, .ico, .bmp, .avif" />
+        <span class="font-weight-bold" style="font-size: 20px" data-text="$paste_link"></span>
+        <input type="text" id="linkUrl" />
+        <button onclick="image.src = gId('linkUrl').value;" data-text="$update"></button>
+      </div>
+    </div>
+    <div class="bigContainer left-right-flow" style="gap: 20px">
+      <div class="controls">
+        <div class="settings_container">
+          <div class="settings_label-select">
+            <h2 data-text="$dither"></h2>
+            <select id="dither">
+              <option value="none" selected="selected">None</option>
+              <option value="matrixThreshold" data-text="$matrix_thresh"></option>
+              <option value="arithmetic" data-text="$arithmetic"></option>
+              <option value="errDiffs" data-text="$err_diffs"></option>
+              <option value="varErrDiffs" data-text="$var_err_diffs"></option>
+            </select>
+          </div>
+          <div class="whitehr"></div>
+          <div class="settings_label-select">
+            <span data-text="$matrix_thresh"></span>
+            <select id="matrix" class="disabled">
+              <option value="threshold">Threshold</option>
+              <option value="bayer2">Bayer 2²</option>
+              <option value="bayer4">Bayer 4²</option>
+              <option value="bayer8">Bayer 8²</option>
+              <option value="bayer16">Bayer 16²</option>
+              <option value="bayer32">Bayer 32²</option>
+              <option value="bayer64">Bayer 64²</option>
+              <option value="bayer128">Bayer 128²</option>
+              <option value="bayer256">Bayer 256²</option>
+              <option value="bayer512">Bayer 512²</option>
+              <option value="blueNoise">Blue Noise</option>
+            </select>
+          </div>
+          <div id="matrixThreshDisp" class="settings_container disabled">
+            <textarea id="matrixInput" placeholder="2D matrix only"></textarea>
+            <input id="divisionInput" type="number" value="2" />
+            <div class="settings_checkbox-label">
+              <input type="checkbox" id="autoDiv" checked="" />
+              <span>Auto</span>
+            </div>
+          </div>
+          <div id="blueNoiseDisp" class="settings_container disabled">
+            <canvas id="blueNoiseCanvas" data-text="$elN_A" style="border: 3px solid #ff0"></canvas>
+            <textarea id="blueNoiseInitArrayInput" placeholder="2D matrix only"></textarea>
+            <div class="settings_label-input">
+              <span data-text="$width"></span>
+              <input type="number" id="blueNoiseWidth" value="64" />
+            </div>
+            <div class="settings_label-input">
+              <span data-text="$height"></span>
+              <input type="number" id="blueNoiseHeight" value="64" />
+            </div>
+            <div class="settings_label-input">
+              <span>PDS radius x</span>
+              <input type="number" id="blueNoisePDSRadiusX" value="7" />
+            </div>
+            <div class="settings_label-input">
+              <span>PDS radius y</span>
+              <input type="number" id="blueNoisePDSRadiusY" value="7" />
+            </div>
+            <div class="settings_label-input">
+              <span>PDS k value</span>
+              <input type="number" id="blueNoisePDSKValue" value="30" />
+            </div>
+            <div class="settings_label-input">
+              <span>Phase 1 sigma start</span>
+              <input type="number" id="blueNoisePhase1SigmaStart" value="6" />
+            </div>
+            <div class="settings_label-input">
+              <span>Phase 1 sigma end</span>
+              <input type="number" id="blueNoisePhase1SigmaEnd" value="6" />
+            </div>
+            <div class="settings_label-input">
+              <span>Phase 2 sigma start</span>
+              <input type="number" id="blueNoisePhase2SigmaStart" value="1.5" />
+            </div>
+            <div class="settings_label-input">
+              <span>Phase 2 sigma end</span>
+              <input type="number" id="blueNoisePhase2SigmaEnd" value="2" />
+            </div>
+            <div class="settings_label-input">
+              <span>Phase 3 sigma start</span>
+              <input type="number" id="blueNoisePhase3SigmaStart" value="2" />
+            </div>
+            <div class="settings_label-input">
+              <span>Phase 3 sigma end</span>
+              <input type="number" id="blueNoisePhase3SigmaEnd" value="2" />
+            </div>
+            <div class="settings_label-input">
+              <span>Phase 1 kernel radius cap</span>
+              <input type="number" id="blueNoisePhase1KernelRadius" value="10000" />
+            </div>
+            <div class="settings_label-input">
+              <span>Phase 2 kernel radius cap</span>
+              <input type="number" id="blueNoisePhase2KernelRadius" value="10000" />
+            </div>
+            <div class="settings_label-input">
+              <span>Phase 3 kernel radius cap</span>
+              <input type="number" id="blueNoisePhase3KernelRadius" value="10000" />
+            </div>
+            <div class="settings_label-input">
+              <span>Candidate filling ratio</span>
+              <input type="number" id="blueNoiseCandidateFillingRatio" value="0.5" />
+            </div>
+            <button onclick="setTimeout(blueNoiseWrapper, 0)">Generate</button>
+          </div>
+          <div class="whitehr"></div>
+          <div class="settings_label-select">
+            <span data-text="$arithmetic"></span>
+            <select id="arithmetic" class="disabled">
+              <option value="arithmeticAdd" data-text="$arithmetic_add"></option>
+              <option value="arithmeticAddConvariant" data-text="$arithmetic_add_conv"></option>
+              <option value="arithmeticXor" data-text="$arithmetic_xor"></option>
+              <option value="arithmeticXorConvariant" data-text="$arithmetic_xor_conv"></option>
+              <option value="halftone" data-text="$halftone"></option>
+              <option value="colorShiftedHalftone" data-text="$color_shifted"></option>
+            </select>
+          </div>
+          <div id="arithmeticDisp" class="settings_container disabled">
+            <textarea id="arithmeticInput" placeholder="'x', 'y', 'c'"></textarea>
+          </div>
+          <div class="whitehr"></div>
+          <div class="settings_label-select">
+            <span data-text="$err_diffs"></span>
+            <select id="errDiffs" class="disabled">
+              <option value="floydSteinberg">Floyd-Steinberg</option>
+              <option value="falseFloydSteinberg">False Floyd-Steinberg</option>
+              <option value="fan">Fan</option>
+              <option value="shiauFan">Shiau-Fan</option>
+              <option value="shiauFan2">Shiau-Fan 2</option>
+              <option value="atkinson">Atkinson</option>
+              <option value="burkes">Burkes</option>
+              <option value="javisJudiceNinke">Jarvis-Judice-Ninke</option>
+              <option value="stucki">Stucki</option>
+              <option value="sierra">Sierra</option>
+              <option value="sierraLite">Sierra Lite</option>
+              <option value="sierra2">Sierra 2</option>
+              <option value="box">Box</option>
+              <option value="diagonal">Diagonal</option>
+              <option value="pigeon">Steve Pigeon</option>
+              <option value="kist">Robert Kist</option>
+              <option value="arce">Stevenson Arce</option>
+              <option value="xot">Xot(Perf Warning)</option>
+              <option value="twoD">Two-Dim</option>
+              <option value="oneD">One-Dim</option>
+            </select>
+          </div>
+          <div id="errDiffsInputDisp" class="settings_container disabled">
+            <textarea id="errDiffsMatrixInput" placeholder="2D matrix only"></textarea>
+            <input id="errDiffsDivisionInput" type="number" />
+            <div class="settings_checkbox-label">
+              <input type="checkbox" id="errDiffsAutoDiv" checked="" />
+              <span>Auto</span>
+            </div>
+          </div>
+          <div id="errLvlsDisp" class="settings_container disabled">
+            <div class="settings_label-slider-input" style="background-color: #ff0000; border-radius: 2px">
+              <span>Red Diffuse</span>
+              <input type="range" id="rErrLvlsRange" min="0" max="1" step="0.00000000001" />
+              <input type="number" id="rErrLvlsInput" value="1" />
+            </div>
+            <div class="settings_label-slider-input" style="background-color: #00ff00; border-radius: 2px">
+              <span>Green Diffuse</span>
+              <input type="range" id="gErrLvlsRange" min="0" max="1" step="0.00000000001" />
+              <input type="number" id="gErrLvlsInput" value="1" />
+            </div>
+            <div class="settings_label-slider-input" style="background-color: #0000ff; border-radius: 2px">
+              <span>Blue Diffuse</span>
+              <input type="range" id="bErrLvlsRange" min="0" max="1" step="0.00000000001" />
+              <input type="number" id="bErrLvlsInput" value="1" />
+            </div>
+          </div>
+          <div class="whitehr"></div>
+          <div class="settings_label-select">
+            <span data-text="$var_err_diffs"></span>
+            <select id="varErrDiffs" class="disabled">
+              <option value="ostromoukhov">Ostromoukhov</option>
+              <!--<option value="zhouFang">ZhouFang</option>-->
+            </select>
+          </div>
+          <div id="varErrDiffsInputDisp" class="settings_container disabled">
+            <textarea id="varErrDiffsMatrixInput" placeholder="3D + 1 matrix"></textarea>
+          </div>
+          <div id="mirrorDisp" class="settings_checkbox-label disabled">
+            <input type="checkbox" id="useMirror" checked="" />
+            <span data-text="$mirror"></span>
+          </div>
+          <div class="whitehr"></div>
+          <div id="serpentineDisp" class="settings_checkbox-label disabled">
+            <input type="checkbox" id="useSerpentine" />
+            <span data-text="$serpentine"></span>
+          </div>
+          <div id="bufferDisp" class="settings_checkbox-label-select disabled">
+            <input type="checkbox" id="useBuffer" />
+            <span data-text="$buffer"></span>
+            <div id="bufferSelectDisp" class="disabled">
+              <select id="buffer">
+                <option value="Int8Array" selected="" data-text="$Int8Array"></option>
+                <option value="Int16Array" data-text="$Int16Array"></option>
+                <option value="Int32Array" data-text="$Int32Array"></option>
+                <option value="Float16Array" data-text="$Float16Array"></option>
+                <option value="Float32Array" data-text="$Float32Array"></option>
+                <option value="Float64Array" data-text="$Float64Array"></option>
+              </select>
+            </div>
+          </div>
+          <div class="whitehr"></div>
+          <div id="lvlsDisp" class="settings_container disabled">
+            <div class="settings_label-slider-input" style="background-color: #ff0000; border-radius: 2px">
+              <span></span>
+              <input type="range" id="rLvlsRange" min="2" max="255" step="0.00000000001" />
+              <input type="number" id="rLvlsInput" value="2" />
+            </div>
+            <div class="settings_label-slider-input" style="background-color: #00ff00; border-radius: 2px">
+              <span></span>
+              <input type="range" id="gLvlsRange" min="2" max="255" step="0.00000000001" />
+              <input type="number" id="gLvlsInput" value="2" />
+            </div>
+            <div class="settings_label-slider-input" style="background-color: #0000ff; border-radius: 2px">
+              <span></span>
+              <input type="range" id="bLvlsRange" min="2" max="255" step="0.00000000001" />
+              <input type="number" id="bLvlsInput" value="2" />
+            </div>
+          </div>
+          <div id="linearDisp" class="settings_checkbox-label disabled">
+            <input type="checkbox" id="useLinear" title="Linear color space" />
+            <span data-text="$linear"></span>
+          </div>
+          <div class="whitehr"></div>
+          <div class="settings_container">
+            <h2>Canvas</h2>
+            <div class="settings_label-input">
+              <span>Width</span>
+              <input type="number" id="canvasWidth" placeholder="480" value="480" />
+            </div>
+            <div class="settings_label-input">
+              <span>Height</span>
+              <input type="number" id="canvasHeight" placeholder="480" value="270" />
+            </div>
+            <button onclick="changeCanvasSize()" data-text="$change_canvas_size"></button>
+            <div class="settings_checkbox-label">
+              <input
+                type="checkbox"
+                id="canvasRendering"
+                checked=""
+                oninput="gId('canvas').style.imageRendering=canvasRendering.checked?'pixelated':'normal'" />
+              <span>Pixelated Rendering</span>
+            </div>
+            <div class="settings_checkbox-label">
+              <input type="checkbox" id="desyncOpt" />
+              <span>Canvas Desynchronize</span>
+            </div>
+            <button onclick="fullscreenCanvas()">Canvas fullscreen</button>
+          </div>
+        </div>
+      </div>
+      <div class="previewContainer">
+        <div class="mainImage">
+          <img id="image" src="test_small.png" crossorigin="anonymous" data-text="$elN_A" />
+        </div>
+        <div class="firehr"></div>
+        <div class="mainCanvas">
+          <canvas id="canvas" data-text="$elN_A"></canvas>
+        </div>
+        <button onclick="process()" data-text="$dither"></button>
+      </div>
+    </div>
+    <div class="border-style-solid" style="border-width: 2px; border-color: #1070ea">
+      <div id="console"></div>
+    </div>
+    <div class="firehr"></div>
+  </body>
+  <script src="scripts/init.js"></script>
+
+  <!--Resources-->
+  <script src="scripts/resources/varErrDiffsRsrc.base.js"></script>
+  <script src="scripts/resources/varErrDiffsRsrc.ostromoukhov.js"></script>
+  <!--<script src="scripts/resources/varErrDiffsRsrc.zhouFang.js"></script>-->
+
+  <!--Libraries-->
+  <script src="scripts/lib/901D3/binUtils.js"></script>
+  <script src="scripts/lib/901D3/blue-noise.js"></script>
+
+  <script src="scripts/locale.js"></script>
+  <script src="scripts/generator.js"></script>
+  <script src="scripts/sizing.js"></script>
+  <script src="scripts/dither.js"></script>
+  <script src="scripts/levels.js"></script>
+  <script src="scripts/process.js"></script>
+  <script>
+    gId("uploadFile").addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const imageURL = URL.createObjectURL(file);
+        image.src = imageURL;
+        printLog("Image src: " + imageURL);
+
+        image.onload = () => {
+          canvas.width = image.width;
+          canvas.height = image.height;
+          canvasWidth = canvas.width;
+          canvasHeight = canvas.height;
+          process();
+        };
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      var activeElement = document.activeElement.tagName.toLowerCase();
+      if (event.code === "KeyR" && activeElement !== "input" && activeElement !== "textarea") {
+        process();
+      } else if (event.code === "KeyF" && activeElement !== "input" && activeElement !== "textarea") fullscreenCanvas();
+    });
+  </script>
+</html>
