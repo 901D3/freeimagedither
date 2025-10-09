@@ -9,25 +9,13 @@ function changeCanvasSize() {
   const width = gId("canvasWidth").value;
   const height = gId("canvasHeight").value;
 
-  if (video.playing) {
-    if (width && height) {
-      canvas.width = Number(width);
-      canvas.height = Number(height);
-      canvasWidth = canvas.width;
-      canvasHeight = canvas.height;
-    } else {
-      alert("width and height cannot be blank or negative.");
-    }
-  }
-  if (video.paused || video.ended) {
-    if (width && height) {
-      canvas.width = Number(width);
-      canvas.height = Number(height);
-      canvasWidth = canvas.width;
-      canvasHeight = canvas.height;
-    } else {
-      alert("width and height cannot be blank or negative.");
-    }
+  if (width && height) {
+    canvas.width = Number(width);
+    canvas.height = Number(height);
+    canvasWidth = canvas.width;
+    canvasHeight = canvas.height;
+  } else {
+    alert("width and height cannot be blank or negative.");
   }
 }
 
