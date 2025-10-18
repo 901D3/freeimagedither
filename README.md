@@ -3,7 +3,7 @@
 
 Basically an image-only dithering tool, forked from [github.com/901D3/freevideodither](https://github.com/901D3/freevideodither)
 
-_Optimized for maximum peformanc._
+_Optimized for maximum peformance_
 
 ----------
 
