@@ -3,11 +3,11 @@
 
 Basically an image-only dithering tool, forked from [github.com/901D3/freevideodither](https://github.com/901D3/freevideodither)
 
-_Optimized for maximum peformance._
+_Optimized for maximum peformanc._
 
 ----------
 
-Tool link: [901d3.github.io/freeimagedither](https://901d3.github.io/freeimagedither/)
+[901d3.github.io/freeimagedither](https://901d3.github.io/freeimagedither/)
 
 ----------
 
