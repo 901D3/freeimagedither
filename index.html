@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/default-passive-events"></script>
   </head>
   <body class="display-flex top-bottom-flow" style="gap: 8px">
+    <span id="mobileNote" style="opacity: 0.7">Recommend going landscape mode on mobile</span>
     <div class="display-flex top-bottom-flow" style="gap: 15px">
       <span
         class="glowfire text-align-center vertical-align-top-margin color font-weight-bold"
@@ -72,7 +73,24 @@
           </div>
           <div id="blueNoiseDisp" class="settings_container disabled">
             <canvas id="blueNoiseCanvas" data-text="$elN_A" style="border: 3px solid #ff0"></canvas>
-            <textarea id="blueNoiseInitArrayInput" placeholder="2D matrix only"></textarea>
+            <textarea id="blueNoiseInitArrayInput" placeholder="Custom initial binary array. 2D array only"></textarea>
+            <div class="display-flex left-right-flow">
+              <textarea
+                type="number"
+                id="blueNoisePhase1Kernel"
+                placeholder="Phase 1 kernel"
+                style="width: 150px; height: 150px"></textarea>
+              <textarea
+                type="number"
+                id="blueNoisePhase2Kernel"
+                placeholder="Phase 2 kernel"
+                style="width: 150px; height: 150px"></textarea>
+              <textarea
+                type="number"
+                id="blueNoisePhase3Kernel"
+                placeholder="Phase 3 kernel"
+                style="width: 150px; height: 150px"></textarea>
+            </div>
             <div class="settings_label-input">
               <span data-text="$width"></span>
               <input type="number" id="blueNoiseWidth" value="64" />
@@ -83,51 +101,27 @@
             </div>
             <div class="settings_label-input">
               <span>PDS radius x</span>
-              <input type="number" id="blueNoisePDSRadiusX" value="7" />
+              <input type="number" id="blueNoisePDSRadiusX" value="8" />
             </div>
             <div class="settings_label-input">
               <span>PDS radius y</span>
-              <input type="number" id="blueNoisePDSRadiusY" value="7" />
+              <input type="number" id="blueNoisePDSRadiusY" value="8" />
             </div>
             <div class="settings_label-input">
               <span>PDS k value</span>
               <input type="number" id="blueNoisePDSKValue" value="30" />
             </div>
             <div class="settings_label-input">
-              <span>Phase 1 sigma start</span>
-              <input type="number" id="blueNoisePhase1SigmaStart" value="6" />
+              <span>Phase 1 sigma</span>
+              <input type="number" id="blueNoisePhase1Sigma" value="6" />
             </div>
             <div class="settings_label-input">
-              <span>Phase 1 sigma end</span>
-              <input type="number" id="blueNoisePhase1SigmaEnd" value="6" />
+              <span>Phase 2 sigma</span>
+              <input type="number" id="blueNoisePhase2Sigma" value="2" />
             </div>
             <div class="settings_label-input">
-              <span>Phase 2 sigma start</span>
-              <input type="number" id="blueNoisePhase2SigmaStart" value="1.5" />
-            </div>
-            <div class="settings_label-input">
-              <span>Phase 2 sigma end</span>
-              <input type="number" id="blueNoisePhase2SigmaEnd" value="2" />
-            </div>
-            <div class="settings_label-input">
-              <span>Phase 3 sigma start</span>
-              <input type="number" id="blueNoisePhase3SigmaStart" value="2" />
-            </div>
-            <div class="settings_label-input">
-              <span>Phase 3 sigma end</span>
-              <input type="number" id="blueNoisePhase3SigmaEnd" value="2" />
-            </div>
-            <div class="settings_label-input">
-              <span>Phase 1 kernel radius cap</span>
-              <input type="number" id="blueNoisePhase1KernelRadius" value="10000" />
-            </div>
-            <div class="settings_label-input">
-              <span>Phase 2 kernel radius cap</span>
-              <input type="number" id="blueNoisePhase2KernelRadius" value="10000" />
-            </div>
-            <div class="settings_label-input">
-              <span>Phase 3 kernel radius cap</span>
-              <input type="number" id="blueNoisePhase3KernelRadius" value="10000" />
+              <span>Phase 3 sigma</span>
+              <input type="number" id="blueNoisePhase3Sigma" value="2" />
             </div>
             <div class="settings_label-input">
               <span>Candidate filling ratio</span>
@@ -185,17 +179,17 @@
             </div>
           </div>
           <div id="errLvlsDisp" class="settings_container disabled">
-            <div class="settings_label-slider-input" style="background-color: #ff0000; border-radius: 2px">
+            <div class="settings_label-slider-input" style="background-color: #ff0000">
               <span>Red Diffuse</span>
               <input type="range" id="rErrLvlsRange" min="0" max="1" step="0.00000000001" />
               <input type="number" id="rErrLvlsInput" value="1" />
             </div>
-            <div class="settings_label-slider-input" style="background-color: #00ff00; border-radius: 2px">
+            <div class="settings_label-slider-input" style="background-color: #00ff00">
               <span>Green Diffuse</span>
               <input type="range" id="gErrLvlsRange" min="0" max="1" step="0.00000000001" />
               <input type="number" id="gErrLvlsInput" value="1" />
             </div>
-            <div class="settings_label-slider-input" style="background-color: #0000ff; border-radius: 2px">
+            <div class="settings_label-slider-input" style="background-color: #0000ff">
               <span>Blue Diffuse</span>
               <input type="range" id="bErrLvlsRange" min="0" max="1" step="0.00000000001" />
               <input type="number" id="bErrLvlsInput" value="1" />
@@ -237,23 +231,23 @@
           </div>
           <div class="whitehr"></div>
           <div id="lvlsDisp" class="settings_container disabled">
-            <div class="settings_label-slider-input" style="background-color: #ff0000; border-radius: 2px">
+            <div class="settings_label-slider-input" style="background-color: #ff0000">
               <span></span>
               <input type="range" id="rLvlsRange" min="2" max="255" step="0.00000000001" />
               <input type="number" id="rLvlsInput" value="2" />
             </div>
-            <div class="settings_label-slider-input" style="background-color: #00ff00; border-radius: 2px">
+            <div class="settings_label-slider-input" style="background-color: #00ff00">
               <span></span>
               <input type="range" id="gLvlsRange" min="2" max="255" step="0.00000000001" />
               <input type="number" id="gLvlsInput" value="2" />
             </div>
-            <div class="settings_label-slider-input" style="background-color: #0000ff; border-radius: 2px">
+            <div class="settings_label-slider-input" style="background-color: #0000ff">
               <span></span>
               <input type="range" id="bLvlsRange" min="2" max="255" step="0.00000000001" />
               <input type="number" id="bLvlsInput" value="2" />
             </div>
           </div>
-          <div id="linearDisp" class="settings_checkbox-label disabled">
+          <div id="linearDisp" class="settings_checkbox-label">
             <input type="checkbox" id="useLinear" title="Linear color space" />
             <span data-text="$linear"></span>
           </div>
@@ -310,15 +304,22 @@
 
   <!--Libraries-->
   <script src="scripts/lib/901D3/binUtils.js"></script>
-  <script src="scripts/lib/901D3/blue-noise.js"></script>
+  <script src="scripts/lib/901D3/blue-noise-utils.js"></script>
+  <script src="scripts/lib/901D3/blue-noise-float32.js"></script>
 
   <script src="scripts/locale.js"></script>
   <script src="scripts/generator.js"></script>
   <script src="scripts/sizing.js"></script>
   <script src="scripts/dither.js"></script>
-  <script src="scripts/levels.js"></script>
+  <script src="scripts/misc.js"></script>
   <script src="scripts/process.js"></script>
   <script>
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    document.getElementById("mobileNote").hidden = true;
+    if (width < height) document.getElementById("mobileNote").hidden = false;
+
     gId("uploadFile").addEventListener("change", function (event) {
       const file = event.target.files[0];
       if (file) {
@@ -327,10 +328,22 @@
         printLog("Image src: " + imageURL);
 
         image.onload = () => {
-          canvas.width = image.width;
-          canvas.height = image.height;
-          canvasWidth = canvas.width;
-          canvasHeight = canvas.height;
+          console.log(image.height);
+          console.log(image.width);
+          gId("canvasWidth").placeholder = image.width;
+          gId("canvasHeight").placeholder = image.height;
+          if (image.width > 1920 || image.height > 1080) {
+            canvas.width = 480;
+            canvas.height = 270;
+            canvasWidth = 480;
+            canvasHeight = 270;
+          } else {
+            canvas.width = image.width;
+            canvas.height = image.height;
+            canvasWidth = canvas.width;
+            canvasHeight = canvas.height;
+          }
+          errDiffsBuffer = bufferChange(canvasWidth, canvasHeight);
           process();
         };
       }
