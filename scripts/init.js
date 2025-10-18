@@ -110,6 +110,9 @@ var rErrLvls;
 var gErrLvls;
 var bErrLvls;
 
+var colorLimitArray = [rLvls, gLvls, bLvls];
+var colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
+
 var useLinear;
 var useSerpentine;
 var useBuffer;
@@ -270,7 +273,7 @@ function mirrorIdx(i, n) {
 const linearLUT = new Float32Array(256);
 for (let i = 0; i < 256; i++) {
   const c = i / 255;
-  linearLUT[i] = (c <= 0.04045 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4)) * 255;
+  linearLUT[i] = (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4) * 255;
 }
 
 function defV(v1, v2, vx) {
@@ -445,23 +448,10 @@ function disableAll() {
   gId("varErrDiffsInputDisp").classList.add("disabled");
   gId("lvlsDisp").classList.add("disabled");
   gId("errLvlsDisp").classList.add("disabled");
-  gId("linearDisp").classList.add("disabled");
   gId("serpentineDisp").classList.add("disabled");
   gId("bufferDisp").classList.add("disabled");
   gId("mirrorDisp").classList.add("disabled");
 }
-
-gId("useLinear").addEventListener("change", function () {
-  useLinear = gId("useLinear").checked;
-});
-
-gId("useSerpentine").addEventListener("change", function () {
-  useSerpentine = gId("useSerpentine").checked;
-});
-
-gId("useBuffer").addEventListener("change", function () {
-  useBuffer = gId("useBuffer").checked;
-});
 
 gId("dither").addEventListener("change", function () {
   let dropdownValue = gId("dither").value;
@@ -472,7 +462,6 @@ gId("dither").addEventListener("change", function () {
     gId("matrix").classList.remove("disabled");
     gId("matrixThreshDisp").classList.remove("disabled");
     gId("lvlsDisp").classList.remove("disabled");
-    gId("linearDisp").classList.remove("disabled");
     if (gId("matrix").value === "blueNoise") {
       gId("blueNoiseDisp").classList.remove("disabled");
     }
