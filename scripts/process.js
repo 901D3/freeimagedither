@@ -9,7 +9,7 @@ const d = {
 function process() {
   const t0 = performance.now();
   processFrame();
-  printLog("Dithering took " + (performance.now() - t0) + "ms");
+  if (ditherDropdownValue !== "none") printLog("Dithering took " + (performance.now() - t0) + "ms");
 }
 
 function processFrame() {
