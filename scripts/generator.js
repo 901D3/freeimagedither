@@ -35,24 +35,28 @@ function blueNoiseWrapper() {
   blueNoiseCanvas.width = blueNoiseWidth;
   blueNoiseCanvas.height = blueNoiseHeight;
   const t0 = performance.now();
-  const result = blueNoise.voidAndCluster(
+  const result = blueNoiseFloat32.voidAndCluster(
     blueNoiseWidth,
     blueNoiseHeight,
     Number(document.getElementById("blueNoisePDSRadiusX").value),
     Number(document.getElementById("blueNoisePDSRadiusY").value),
     Number(document.getElementById("blueNoisePDSKValue").value),
-    Number(document.getElementById("blueNoisePhase1SigmaStart").value),
-    Number(document.getElementById("blueNoisePhase1SigmaEnd").value),
-    Number(document.getElementById("blueNoisePhase2SigmaStart").value),
-    Number(document.getElementById("blueNoisePhase2SigmaEnd").value),
-    Number(document.getElementById("blueNoisePhase3SigmaStart").value),
-    Number(document.getElementById("blueNoisePhase3SigmaEnd").value),
-    Number(document.getElementById("blueNoisePhase1KernelRadius").value),
-    Number(document.getElementById("blueNoisePhase2KernelRadius").value),
-    Number(document.getElementById("blueNoisePhase3KernelRadius").value),
+    Number(document.getElementById("blueNoisePhase1Sigma").value),
+    Number(document.getElementById("blueNoisePhase2Sigma").value),
+    Number(document.getElementById("blueNoisePhase3Sigma").value),
+    document.getElementById("blueNoisePhase1Kernel").value != ""
+      ? JSON.parse(document.getElementById("blueNoisePhase1Kernel").value)
+      : null,
+    document.getElementById("blueNoisePhase2Kernel").value != ""
+      ? JSON.parse(document.getElementById("blueNoisePhase2Kernel").value)
+      : null,
+    document.getElementById("blueNoisePhase3Kernel").value != ""
+      ? JSON.parse(document.getElementById("blueNoisePhase3Kernel").value)
+      : null,
     Number(document.getElementById("blueNoiseCandidateFillingRatio").value),
     blueNoiseInitArray
   );
+  
   printLog("Generating took " + (performance.now() - t0) + "ms");
   const frame = blueNoiseCtx.getImageData(0, 0, blueNoiseWidth, blueNoiseHeight);
   const imageData = frame.data;
