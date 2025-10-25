@@ -15,3 +15,8 @@ _Optimized for maximum peformance_
 [cs559-5.ppt by University Of Wisconsin](http://research.cs.wisc.edu/graphics/Courses/559-f2002/lectures/cs559-5.ppt)
 
 [dithermark.com](https://www.dithermark.com)
+
+
+### **901D3/blue-noise.js**
+
+[https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org/licenses/gpl-3.0.en.html)
