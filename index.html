@@ -74,23 +74,6 @@
           <div id="blueNoiseDisp" class="settings_container disabled">
             <canvas id="blueNoiseCanvas" data-text="$elN_A" style="border: 3px solid #ff0"></canvas>
             <textarea id="blueNoiseInitArrayInput" placeholder="Custom initial binary array. 2D array only"></textarea>
-            <div class="display-flex left-right-flow">
-              <textarea
-                type="number"
-                id="blueNoisePhase1Kernel"
-                placeholder="Phase 1 kernel"
-                style="width: 150px; height: 150px"></textarea>
-              <textarea
-                type="number"
-                id="blueNoisePhase2Kernel"
-                placeholder="Phase 2 kernel"
-                style="width: 150px; height: 150px"></textarea>
-              <textarea
-                type="number"
-                id="blueNoisePhase3Kernel"
-                placeholder="Phase 3 kernel"
-                style="width: 150px; height: 150px"></textarea>
-            </div>
             <div class="settings_label-input">
               <span data-text="$width"></span>
               <input type="number" id="blueNoiseWidth" value="64" />
@@ -100,33 +83,26 @@
               <input type="number" id="blueNoiseHeight" value="64" />
             </div>
             <div class="settings_label-input">
-              <span>PDS radius x</span>
-              <input type="number" id="blueNoisePDSRadiusX" value="8" />
+              <span>Start sigma</span>
+              <input type="number" id="blueNoiseSigmaStart" value="2" />
             </div>
             <div class="settings_label-input">
-              <span>PDS radius y</span>
-              <input type="number" id="blueNoisePDSRadiusY" value="8" />
+              <span>Middle sigma</span>
+              <input type="number" id="blueNoiseSigmaMiddle" value="1" />
             </div>
             <div class="settings_label-input">
-              <span>PDS k value</span>
-              <input type="number" id="blueNoisePDSKValue" value="30" />
+              <span>End sigma</span>
+              <input type="number" id="blueNoiseSigmaEnd" value="4" />
             </div>
             <div class="settings_label-input">
-              <span>Phase 1 sigma</span>
-              <input type="number" id="blueNoisePhase1Sigma" value="6" />
-            </div>
-            <div class="settings_label-input">
-              <span>Phase 2 sigma</span>
-              <input type="number" id="blueNoisePhase2Sigma" value="2" />
-            </div>
-            <div class="settings_label-input">
-              <span>Phase 3 sigma</span>
-              <input type="number" id="blueNoisePhase3Sigma" value="2" />
+              <span>Density</span>
+              <input type="number" id="blueNoiseDensity" value="0.05" />
             </div>
             <div class="settings_label-input">
               <span>Candidate filling ratio</span>
               <input type="number" id="blueNoiseCandidateFillingRatio" value="0.5" />
             </div>
+            <textarea id="blueNoiseWindowFunc">Math.sin((Math.PI / N) * (n + 0.5))</textarea>
             <button onclick="setTimeout(blueNoiseWrapper, 0)">Generate</button>
           </div>
           <div class="whitehr"></div>
