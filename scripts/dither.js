@@ -36,13 +36,13 @@ function presets() {
     const a = gId("arithmetic").value;
 
     if (a === "arithmeticAdd") {
-      arithmeticInput = "(((x + c * 67 + y * 236) * 119) & 255) / 256";
+      arithmeticInput = "(((x + c * 67 + y * 236) * 119) & 255) / 255";
     } else if (a === "arithmeticAddConvariant") {
-      arithmeticInput = "((x + y * 237) * 119 & 255) / 256";
+      arithmeticInput = "((x + y * 237) * 119 & 255) / 255";
     } else if (a === "arithmeticXor") {
-      arithmeticInput = "(((x + c * 17) ^ y * 149) * 1234 & 255) / 256";
+      arithmeticInput = "(((x + c * 17) ^ y * 149) * 1234 & 255) / 255";
     } else if (a === "arithmeticXorConvariant") {
-      arithmeticInput = "(((x ^ (y * 149)) * 1234) & 255) / 256";
+      arithmeticInput = "(((x ^ (y * 149)) * 1234) & 255) / 255";
     } else if (a === "halftone") {
       arithmeticInput = "0.5 + 0.5 * sin(0.8 * x) * sin(0.8 * y)";
     } else if (a === "colorShiftedHalftone") {
@@ -229,11 +229,11 @@ function bufferChange(w, h) {
   const sqSz4 = w * h * 4;
   const v = gIdV("buffer");
   if (v === "Int8Array") return new Int8Array(sqSz4);
-  if (v === "Int16Array") return new Int8Array(sqSz4);
-  if (v === "Int32Array") return new Int8Array(sqSz4);
-  if (v === "Float16Array") return new Float16Array(sqSz4); //new typed array
-  if (v === "Float32Array") return new Float32Array(sqSz4);
-  if (v === "Float64Array") return new Float32Array(sqSz4);
+  else if (v === "Int16Array") return new Int8Array(sqSz4);
+  else if (v === "Int32Array") return new Int8Array(sqSz4);
+  else if (v === "Float16Array") return new Float16Array(sqSz4); //new typed array
+  else if (v === "Float32Array") return new Float32Array(sqSz4);
+  else if (v === "Float64Array") return new Float32Array(sqSz4);
 }
 
 function parseKernelErrDiffs(matrix, division) {
