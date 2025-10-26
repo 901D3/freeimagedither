@@ -35,28 +35,18 @@ function blueNoiseWrapper() {
   blueNoiseCanvas.width = blueNoiseWidth;
   blueNoiseCanvas.height = blueNoiseHeight;
   const t0 = performance.now();
-  const result = blueNoiseFloat32.voidAndCluster(
+  const result = blueNoiseFloat32.variableVoidAndCluster(
     blueNoiseWidth,
     blueNoiseHeight,
-    Number(document.getElementById("blueNoisePDSRadiusX").value),
-    Number(document.getElementById("blueNoisePDSRadiusY").value),
-    Number(document.getElementById("blueNoisePDSKValue").value),
-    Number(document.getElementById("blueNoisePhase1Sigma").value),
-    Number(document.getElementById("blueNoisePhase2Sigma").value),
-    Number(document.getElementById("blueNoisePhase3Sigma").value),
-    document.getElementById("blueNoisePhase1Kernel").value != ""
-      ? JSON.parse(document.getElementById("blueNoisePhase1Kernel").value)
-      : null,
-    document.getElementById("blueNoisePhase2Kernel").value != ""
-      ? JSON.parse(document.getElementById("blueNoisePhase2Kernel").value)
-      : null,
-    document.getElementById("blueNoisePhase3Kernel").value != ""
-      ? JSON.parse(document.getElementById("blueNoisePhase3Kernel").value)
-      : null,
+    Number(document.getElementById("blueNoiseSigmaStart").value),
+    Number(document.getElementById("blueNoiseSigmaMiddle").value),
+    Number(document.getElementById("blueNoiseSigmaEnd").value),
     Number(document.getElementById("blueNoiseCandidateFillingRatio").value),
-    blueNoiseInitArray
+    Number(document.getElementById("blueNoiseDensity").value),
+    document.getElementById("blueNoiseInitArrayInput").value,
+    document.getElementById("blueNoiseWindowFunc").value
   );
-  
+
   printLog("Generating took " + (performance.now() - t0) + "ms");
   const frame = blueNoiseCtx.getImageData(0, 0, blueNoiseWidth, blueNoiseHeight);
   const imageData = frame.data;
