@@ -14,6 +14,7 @@ function changeCanvasSize() {
     canvas.height = Number(height);
     canvasWidth = canvas.width;
     canvasHeight = canvas.height;
+    errDiffsBuffer = bufferChange(canvasWidth, canvasHeight);
   } else {
     alert("width and height cannot be blank or negative.");
   }
