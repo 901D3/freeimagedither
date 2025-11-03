@@ -34,30 +34,68 @@ function bayerGen(size) {
 function blueNoiseWrapper() {
   blueNoiseCanvas.width = blueNoiseWidth;
   blueNoiseCanvas.height = blueNoiseHeight;
+  const sqSz = blueNoiseWidth * blueNoiseHeight;
   const t0 = performance.now();
-  const result = blueNoiseFloat32.variableVoidAndCluster(
-    blueNoiseWidth,
-    blueNoiseHeight,
-    Number(document.getElementById("blueNoiseSigmaStart").value),
-    Number(document.getElementById("blueNoiseSigmaMiddle").value),
-    Number(document.getElementById("blueNoiseSigmaEnd").value),
-    Number(document.getElementById("blueNoiseCandidateFillingRatio").value),
-    Number(document.getElementById("blueNoiseDensity").value),
-    document.getElementById("blueNoiseInitArrayInput").value,
-    document.getElementById("blueNoiseWindowFunc").value
+  let result;
+
+  blueNoiseFloat32.gaussianSigmaRadiusMultiplier = Number(
+    document.getElementById("blueNoiseGaussianSigmaRadiusMultiplier").value
   );
+
+  if (blueNoiseAlgo === "VACluster") {
+    result = blueNoiseFloat32.originalVoidAndCluster(
+      blueNoiseWidth,
+      blueNoiseHeight,
+      Number(document.getElementById("blueNoiseSigmaImage").value),
+      Number(document.getElementById("blueNoiseDensity").value)
+    );
+  } else if (blueNoiseAlgo === "extendedVACluster") {
+    result = blueNoiseFloat32.extendedVoidAndCluster(
+      blueNoiseWidth,
+      blueNoiseHeight,
+      Number(document.getElementById("blueNoiseSigmaImage").value),
+      Number(document.getElementById("blueNoiseInitialSigmaScale").value),
+      null,
+      Number(document.getElementById("blueNoiseDensity").value),
+      Number(document.getElementById("blueNoiseCandidateFillingRatio").value)
+    );
+  } else if (blueNoiseAlgo === "bartWronskiVACluster") {
+    result = blueNoiseFloat32.bartWronskiVoidAndCluster(
+      blueNoiseWidth,
+      blueNoiseHeight,
+      Number(document.getElementById("blueNoiseSigmaImage").value),
+      Number(document.getElementById("blueNoiseInitialSigmaScale").value),
+      Number(document.getElementById("blueNoiseDensity").value)
+    );
+  } else if (blueNoiseAlgo === "georgievFajardo") {
+    result = new Float32Array(sqSz);
+    let initArray;
+    if (Array.isArray(gId("blueNoiseInitArrayInput").value)) {
+      initArray = JSON.parse(gId("blueNoiseInitArrayInput").value);
+    }
+
+    if (initArray && initArray.flat().length === sqSz) result.set(initArray.flat());
+    else for (let i = 0; i < sqSz; i++) result[i] = Math.floor(Math.random() * sqSz);
+
+    blueNoiseFloat32.georgievFajardoInPlace(
+      result,
+      blueNoiseWidth,
+      blueNoiseHeight,
+      Number(document.getElementById("blueNoiseSigmaImage").value),
+      Number(document.getElementById("blueNoiseSigmaSample").value),
+      Number(document.getElementById("blueNoiseIterations").value)
+    );
+  }
+
+  const denom = (1 / findHighest(result)) * 255;
 
   printLog("Generating took " + (performance.now() - t0) + "ms");
   const frame = blueNoiseCtx.getImageData(0, 0, blueNoiseWidth, blueNoiseHeight);
   const imageData = frame.data;
-  const sqSz = blueNoiseWidth * blueNoiseHeight;
-  const sqSz4 = sqSz * 4;
-  const denom = (1 / findHighest(result)) * 255;
-
-  for (let i = 0; i < sqSz4; i += 4) imageData[i + 3] = 255;
 
   for (let y = 0; y < blueNoiseHeight; y++) {
     const yOffs = y * blueNoiseWidth;
+
     for (let x = 0; x < blueNoiseWidth; x++) {
       let i = yOffs + x;
       const v = Math.floor(result[i] * denom);
@@ -65,8 +103,11 @@ function blueNoiseWrapper() {
       imageData[i] = v;
       imageData[i + 1] = v;
       imageData[i + 2] = v;
+      imageData[i + 3] = 255;
     }
   }
+
+  blueNoiseCtx.putImageData(frame, 0, 0);
 
   matrixInput = [];
   for (let y = 0; y < blueNoiseHeight; y++) {
@@ -82,6 +123,4 @@ function blueNoiseWrapper() {
   gId("divisionInput").value = highest;
   divisionInput = highest;
   matrixInputLUTCreate();
-
-  blueNoiseCtx.putImageData(frame, 0, 0);
 }
