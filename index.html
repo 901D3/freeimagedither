@@ -6,8 +6,8 @@
     <meta name="description" content="A tool for dither images" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/unifont@5.1.0/index.min.css" />
-    <script src="https://unpkg.com/default-passive-events"></script>
   </head>
   <body class="display-flex top-bottom-flow" style="gap: 8px">
     <span id="mobileNote" style="opacity: 0.7">Recommend going landscape mode on mobile</span>
@@ -59,7 +59,6 @@
               <option value="bayer64">Bayer 64²</option>
               <option value="bayer128">Bayer 128²</option>
               <option value="bayer256">Bayer 256²</option>
-              <option value="bayer512">Bayer 512²</option>
               <option value="blueNoise">Blue Noise</option>
             </select>
           </div>
@@ -74,6 +73,15 @@
           <div id="blueNoiseDisp" class="settings_container disabled">
             <canvas id="blueNoiseCanvas" data-text="$elN_A" style="border: 3px solid #ff0"></canvas>
             <textarea id="blueNoiseInitArrayInput" placeholder="Custom initial binary array. 2D array only"></textarea>
+            <div class="settings_label-select">
+              <span>Algorithm</span>
+              <select id="blueNoiseAlgo">
+                <option value="VACluster">Void and Cluster</option>
+                <option value="extendedVACluster">Extended Void and Cluster</option>
+                <option value="bartWronskiVACluster">Bart Wronski's Void and Cluster</option>
+                <option value="georgievFajardo">Georgiev-Fajardo(Relaxation)</option>
+              </select>
+            </div>
             <div class="settings_label-input">
               <span data-text="$width"></span>
               <input type="number" id="blueNoiseWidth" value="64" />
@@ -83,26 +91,33 @@
               <input type="number" id="blueNoiseHeight" value="64" />
             </div>
             <div class="settings_label-input">
-              <span>Start sigma</span>
-              <input type="number" id="blueNoiseSigmaStart" value="2" />
+              <span>Sigma radius multiplier</span>
+              <input type="number" id="blueNoiseGaussianSigmaRadiusMultiplier" value="4" />
             </div>
             <div class="settings_label-input">
-              <span>Middle sigma</span>
-              <input type="number" id="blueNoiseSigmaMiddle" value="1" />
+              <span>Initial sigma scale</span>
+              <input type="number" id="blueNoiseInitialSigmaScale" class="disabled" value="0.3" />
             </div>
             <div class="settings_label-input">
-              <span>End sigma</span>
-              <input type="number" id="blueNoiseSigmaEnd" value="4" />
+              <span>Sigma(Image)</span>
+              <input type="number" id="blueNoiseSigmaImage" value="2" />
             </div>
             <div class="settings_label-input">
-              <span>Density</span>
-              <input type="number" id="blueNoiseDensity" value="0.05" />
+              <span>Sigma sample</span>
+              <input type="number" id="blueNoiseSigmaSample" class="disabled" value="0.1" />
             </div>
             <div class="settings_label-input">
               <span>Candidate filling ratio</span>
               <input type="number" id="blueNoiseCandidateFillingRatio" value="0.5" />
             </div>
-            <textarea id="blueNoiseWindowFunc">Math.sin((Math.PI / N) * (n + 0.5))</textarea>
+            <div class="settings_label-input">
+              <span>Density</span>
+              <input type="number" id="blueNoiseDensity" value="0.1" />
+            </div>
+            <div class="settings_label-input">
+              <span>Iterations</span>
+              <input type="number" id="blueNoiseIterations" class="disabled" value="500000" />
+            </div>
             <button onclick="setTimeout(blueNoiseWrapper, 0)">Generate</button>
           </div>
           <div class="whitehr"></div>
