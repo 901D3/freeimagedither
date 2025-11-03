@@ -2,7 +2,7 @@
  * Free JS implementation of Void and Cluster method by Robert Ulichney and other methods
  * Remember to link blue-noise-utils.js
  *
- * v0.2.1
+ * v0.2.2
  * https://github.com/901D3/blue-noise.js
  *
  * Copyright (c) 901D3
@@ -165,8 +165,7 @@ const blueNoiseFloat32 = (function () {
     initialSigmaScale = 0.3, // Best value for adaptive candidate algorithm
     customKernel,
     density = 0.1,
-    candidateFillingRatio = 0.5,
-    tileSize = 8
+    candidateFillingRatio = 0.5
   ) {
     // Safety checks
     if (width == null) throw new Error("'width' arguments is mandatory");
@@ -182,8 +181,6 @@ const blueNoiseFloat32 = (function () {
       console.warn("candidateFillingRatio falled back to " + 0.5);
       candidateFillingRatio = 0.5;
     }
-
-    tileSize--;
 
     // Get custom kernel dimension before flat them
     let kernel;
@@ -221,26 +218,23 @@ const blueNoiseFloat32 = (function () {
 
     for (let rank = filled1 - 1; rank >= 0; rank--) {
       let value = -Infinity;
-      let candidates = [];
+      let idx;
 
       for (let i = 0; i < sqSz; i++) {
-        if (candidates.length === tileSize) break;
         if (temp[i] === 1) {
           const blurredValue = blurred[i];
           if (blurredValue > value) {
             value = blurredValue;
-            candidates.push(i);
+            idx = i;
           }
         }
       }
 
-      for (let i = 0, length = candidates.length; i < length; i++) {
-        const idx = candidates[i];
-        temp[idx] = 0;
-        rankArray[idx] = rank;
+      // Remove "1" from tightest cluster in Binary Pattern.
+      temp[idx] = 0;
+      rankArray[idx] = rank;
 
-        blueNoiseUtils.deltaBlurUpdateInPlace(width, height, idx, -1, blurred, kernel, kernelWidth, kernelHeight);
-      }
+      blueNoiseUtils.deltaBlurUpdateInPlace(width, height, idx, -1, blurred, kernel, kernelWidth, kernelHeight);
     }
     // End of Phase 1
 
