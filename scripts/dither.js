@@ -36,13 +36,13 @@ function presets() {
     const a = gId("arithmetic").value;
 
     if (a === "arithmeticAdd") {
-      arithmeticInput = "(((x + c * 67 + y * 236) * 119) & 255) / 255";
+      arithmeticInput = "(((x + c * 67 + y * 236) * 119) & 255) / 256";
     } else if (a === "arithmeticAddConvariant") {
-      arithmeticInput = "((x + y * 237) * 119 & 255) / 255";
+      arithmeticInput = "((x + y * 237) * 119 & 255) / 256";
     } else if (a === "arithmeticXor") {
-      arithmeticInput = "(((x + c * 17) ^ y * 149) * 1234 & 255) / 255";
+      arithmeticInput = "(((x + c * 17) ^ y * 149) * 1234 & 255) / 256";
     } else if (a === "arithmeticXorConvariant") {
-      arithmeticInput = "(((x ^ (y * 149)) * 1234) & 255) / 255";
+      arithmeticInput = "(((x ^ (y * 149)) * 1234) & 255) / 256";
     } else if (a === "halftone") {
       arithmeticInput = "0.5 + 0.5 * sin(0.8 * x) * sin(0.8 * y)";
     } else if (a === "colorShiftedHalftone") {
