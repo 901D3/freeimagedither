@@ -89,7 +89,7 @@ function presets() {
         [0, 0, -1, 4, 2],
         [1, 2, 4, 2, 1],
       ];
-    } else if (a === "javisjudiceninke") {
+    } else if (a === "javisJudiceNinke") {
       errDiffsMatrixInput = [
         [0, 0, -1, 7, 5],
         [3, 5, 7, 5, 3],
