@@ -204,6 +204,34 @@ gId("blueNoiseHeight").addEventListener("input", function () {
   blueNoiseHeight = Number(gId("blueNoiseHeight").value);
 });
 
+gId("blueNoiseAlgo").addEventListener("input", function () {
+  blueNoiseAlgo = gId("blueNoiseAlgo").value;
+});
+
+gId("blueNoiseAlgo").addEventListener("change", function () {
+  if (blueNoiseAlgo === "VACluster") {
+    gId("blueNoiseInitialSigmaScale").classList.add("disabled");
+    gId("blueNoiseSigmaSample").classList.add("disabled");
+    gId("blueNoiseIterations").classList.add("disabled");
+    gId("blueNoiseCandidateFillingRatio").classList.add("disabled");
+  } else if (blueNoiseAlgo === "extendedVACluster") {
+    gId("blueNoiseInitialSigmaScale").classList.remove("disabled");
+    gId("blueNoiseSigmaSample").classList.add("disabled");
+    gId("blueNoiseIterations").classList.add("disabled");
+    gId("blueNoiseCandidateFillingRatio").classList.remove("disabled");
+  } else if (blueNoiseAlgo === "bartWronskiVACluster") {
+    gId("blueNoiseInitialSigmaScale").classList.remove("disabled");
+    gId("blueNoiseSigmaSample").classList.add("disabled");
+    gId("blueNoiseIterations").classList.add("disabled");
+    gId("blueNoiseCandidateFillingRatio").classList.add("disabled");
+  } else if (blueNoiseAlgo === "georgievFajardo") {
+    gId("blueNoiseInitialSigmaScale").classList.remove("disabled");
+    gId("blueNoiseSigmaSample").classList.remove("disabled");
+    gId("blueNoiseIterations").classList.remove("disabled");
+    gId("blueNoiseCandidateFillingRatio").classList.add("disabled");
+  }
+});
+
 (function () {
   sliderInputSync(gId("rLvlsRange"), gId("rLvlsInput"), "rLvls", 2, "input");
   sliderInputSync(gId("gLvlsRange"), gId("gLvlsInput"), "gLvls", 2, "input");
