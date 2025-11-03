@@ -139,6 +139,7 @@ var useMirror;
 var blueNoiseInitArray;
 var blueNoiseWidth = 64;
 var blueNoiseHeight = 64;
+var blueNoiseAlgo = "VACluster";
 
 var setErrDiffsTarget = () => {};
 var getBufferValue = () => {};
@@ -203,9 +204,7 @@ function printLog(message, logToConsole, color, flag) {
 
   consoleEl.scrollTop = consoleEl.scrollHeight;
 
-  if (logToConsole === 1) {
-    console.log(message);
-  }
+  if (logToConsole === 1) console.log(message);
 }
 
 function flashChanges(el, fades, time, ...fadeColors) {
