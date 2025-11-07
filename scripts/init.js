@@ -437,6 +437,7 @@ if (bigContainer) {
 
 function disableAll() {
   gId("matrix").classList.add("disabled");
+  gId("uploadDitherImage").classList.add("disabled");
   gId("arithmetic").classList.add("disabled");
   gId("errDiffs").classList.add("disabled");
   gId("varErrDiffs").classList.add("disabled");
@@ -459,6 +460,7 @@ gId("dither").addEventListener("change", function () {
   } else if (dropdownValue === "matrixThreshold") {
     disableAll();
     gId("matrix").classList.remove("disabled");
+    gId("uploadDitherImage").classList.remove("disabled");
     gId("matrixThreshDisp").classList.remove("disabled");
     gId("lvlsDisp").classList.remove("disabled");
     if (gId("matrix").value === "blueNoise") {
