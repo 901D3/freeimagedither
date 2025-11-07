@@ -70,9 +70,16 @@
               <span>Auto</span>
             </div>
           </div>
+          <div class="whitehr"></div>
+          <input
+            type="file"
+            id="uploadDitherImage"
+            class="height-fit-content disabled"
+            title=".png, .jpg, .jpeg, .webp, .gif, .ico, .bmp, .avif"
+            accept=".png, .jpg, .jpeg, .webp, .gif, .ico, .bmp, .avif" />
+          <div class="whitehr"></div>
           <div id="blueNoiseDisp" class="settings_container disabled">
             <canvas id="blueNoiseCanvas" data-text="$elN_A" style="border: 3px solid #ff0"></canvas>
-            <textarea id="blueNoiseInitArrayInput" placeholder="Custom initial binary array. 2D array only"></textarea>
             <div class="settings_label-select">
               <span>Algorithm</span>
               <select id="blueNoiseAlgo">
@@ -92,7 +99,7 @@
             </div>
             <div class="settings_label-input">
               <span>Sigma radius multiplier</span>
-              <input type="number" id="blueNoiseGaussianSigmaRadiusMultiplier" value="4" />
+              <input type="number" id="blueNoiseGaussianSigmaRadiusMultiplier" value="6" />
             </div>
             <div class="settings_label-input">
               <span>Initial sigma scale</span>
@@ -100,15 +107,11 @@
             </div>
             <div class="settings_label-input">
               <span>Sigma(Image)</span>
-              <input type="number" id="blueNoiseSigmaImage" value="2" />
+              <input type="number" id="blueNoiseSigmaImage" value="1.9" />
             </div>
             <div class="settings_label-input">
               <span>Sigma sample</span>
-              <input type="number" id="blueNoiseSigmaSample" class="disabled" value="0.1" />
-            </div>
-            <div class="settings_label-input">
-              <span>Candidate filling ratio</span>
-              <input type="number" id="blueNoiseCandidateFillingRatio" value="0.5" />
+              <input type="number" id="blueNoiseSigmaSample" class="disabled" value="1" />
             </div>
             <div class="settings_label-input">
               <span>Density</span>
@@ -191,7 +194,7 @@
             <span data-text="$var_err_diffs"></span>
             <select id="varErrDiffs" class="disabled">
               <option value="ostromoukhov">Ostromoukhov</option>
-              <!--<option value="zhouFang">ZhouFang</option>-->
+              <option value="zhouFang">ZhouFang</option>
             </select>
           </div>
           <div id="varErrDiffsInputDisp" class="settings_container disabled">
@@ -266,7 +269,7 @@
               <input type="checkbox" id="desyncOpt" />
               <span>Canvas Desynchronize</span>
             </div>
-            <button onclick="fullscreenCanvas()">Canvas fullscreen</button>
+            <button id="saveImage">Save Image</button>
           </div>
         </div>
       </div>
@@ -276,7 +279,7 @@
         </div>
         <div class="firehr"></div>
         <div class="mainCanvas">
-          <canvas id="canvas" data-text="$elN_A"></canvas>
+          <canvas id="canvas" width="512" height="768" data-text="$elN_A"></canvas>
         </div>
         <button onclick="process()" data-text="$dither"></button>
       </div>
@@ -291,7 +294,7 @@
   <!--Resources-->
   <script src="scripts/resources/varErrDiffsRsrc.base.js"></script>
   <script src="scripts/resources/varErrDiffsRsrc.ostromoukhov.js"></script>
-  <!--<script src="scripts/resources/varErrDiffsRsrc.zhouFang.js"></script>-->
+  <script src="scripts/resources/varErrDiffsRsrc.zhouFang.js"></script>
 
   <!--Libraries-->
   <script src="scripts/lib/901D3/binUtils.js"></script>
@@ -319,8 +322,6 @@
         printLog("Image src: " + imageURL);
 
         image.onload = () => {
-          console.log(image.height);
-          console.log(image.width);
           gId("canvasWidth").placeholder = image.width;
           gId("canvasHeight").placeholder = image.height;
           if (image.width > 1920 || image.height > 1080) {
@@ -336,6 +337,45 @@
           }
           errDiffsBuffer = bufferChange(canvasWidth, canvasHeight);
           process();
+        };
+      }
+    });
+
+    gId("uploadDitherImage").addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const ditherImage = new Image();
+        const ditherImageCanvas = document.createElement("canvas");
+        const ditherImageCtx = ditherImageCanvas.getContext("2d");
+
+        const imageURL = URL.createObjectURL(file);
+        ditherImage.src = imageURL;
+
+        ditherImage.onload = () => {
+          ditherImageCanvas.width = ditherImage.width;
+          ditherImageCanvas.height = ditherImage.height;
+
+          ditherImageCtx.drawImage(ditherImage, 0, 0);
+
+          const frame = ditherImageCtx.getImageData(0, 0, ditherImageCanvas.width, ditherImageCanvas.height);
+          const imageData = frame.data;
+
+          const highest = findHighest(imageData);
+
+          matrixInput = [];
+          for (let y = 0; y < ditherImageCanvas.height; y++) {
+            const yOffs = y * ditherImageCanvas.height;
+            if (!matrixInput[y]) matrixInput[y] = [];
+
+            for (let x = 0; x < ditherImageCanvas.width; x++) {
+              matrixInput[y][x] = imageData[(yOffs + x) << 2];
+            }
+          }
+
+          gId("matrixInput").value = formatNestedArray(matrixInput);
+          gId("divisionInput").value = highest + 1;
+          divisionInput = highest + 1;
+          matrixInputLUTCreate();
         };
       }
     });
