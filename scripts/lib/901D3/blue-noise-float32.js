@@ -2,7 +2,7 @@
  * Free JS implementation of Void and Cluster method by Robert Ulichney and other methods
  * Remember to link blue-noise-utils.js
  *
- * v0.2.2
+ * v0.2.21
  * https://github.com/901D3/blue-noise.js
  *
  * Copyright (c) 901D3
