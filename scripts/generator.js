@@ -42,6 +42,8 @@ function blueNoiseWrapper() {
     document.getElementById("blueNoiseGaussianSigmaRadiusMultiplier").value
   );
 
+  blueNoiseFloat32.initialSigmaScale = Number(document.getElementById("blueNoiseInitialSigmaScale").value);
+
   if (blueNoiseAlgo === "VACluster") {
     result = blueNoiseFloat32.originalVoidAndCluster(
       blueNoiseWidth,
@@ -54,28 +56,19 @@ function blueNoiseWrapper() {
       blueNoiseWidth,
       blueNoiseHeight,
       Number(document.getElementById("blueNoiseSigmaImage").value),
-      Number(document.getElementById("blueNoiseInitialSigmaScale").value),
       null,
-      Number(document.getElementById("blueNoiseDensity").value),
-      Number(document.getElementById("blueNoiseCandidateFillingRatio").value)
+      Number(document.getElementById("blueNoiseDensity").value)
     );
   } else if (blueNoiseAlgo === "bartWronskiVACluster") {
     result = blueNoiseFloat32.bartWronskiVoidAndCluster(
       blueNoiseWidth,
       blueNoiseHeight,
       Number(document.getElementById("blueNoiseSigmaImage").value),
-      Number(document.getElementById("blueNoiseInitialSigmaScale").value),
       Number(document.getElementById("blueNoiseDensity").value)
     );
   } else if (blueNoiseAlgo === "georgievFajardo") {
     result = new Float32Array(sqSz);
-    let initArray;
-    if (Array.isArray(gId("blueNoiseInitArrayInput").value)) {
-      initArray = JSON.parse(gId("blueNoiseInitArrayInput").value);
-    }
-
-    if (initArray && initArray.flat().length === sqSz) result.set(initArray.flat());
-    else for (let i = 0; i < sqSz; i++) result[i] = Math.floor(Math.random() * sqSz);
+    for (let i = 0; i < sqSz; i++) result[i] = Math.floor(Math.random() * sqSz);
 
     blueNoiseFloat32.georgievFajardoInPlace(
       result,
@@ -87,7 +80,8 @@ function blueNoiseWrapper() {
     );
   }
 
-  const denom = (1 / findHighest(result)) * 255;
+  const highest = findHighest(result);
+  const denom = (1 / highest) * 255;
 
   printLog("Generating took " + (performance.now() - t0) + "ms");
   const frame = blueNoiseCtx.getImageData(0, 0, blueNoiseWidth, blueNoiseHeight);
@@ -98,7 +92,7 @@ function blueNoiseWrapper() {
 
     for (let x = 0; x < blueNoiseWidth; x++) {
       let i = yOffs + x;
-      const v = Math.floor(result[i] * denom);
+      const v = Math.round(result[i] * denom);
       i <<= 2;
       imageData[i] = v;
       imageData[i + 1] = v;
@@ -113,14 +107,14 @@ function blueNoiseWrapper() {
   for (let y = 0; y < blueNoiseHeight; y++) {
     const yOffs = y * blueNoiseWidth;
     if (!matrixInput[y]) matrixInput[y] = [];
+
     for (let x = 0; x < blueNoiseWidth; x++) {
-      matrixInput[y][x] = Math.floor(result[yOffs + x]);
+      matrixInput[y][x] = result[yOffs + x];
     }
   }
 
-  const highest = findHighest(matrixInput.flat()) + 1;
   gId("matrixInput").value = formatNestedArray(matrixInput);
-  gId("divisionInput").value = highest;
-  divisionInput = highest;
+  gId("divisionInput").value = highest + 1;
+  divisionInput = highest + 1;
   matrixInputLUTCreate();
 }
