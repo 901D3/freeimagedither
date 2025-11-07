@@ -1,3 +1,14 @@
+gId("saveImage").addEventListener("click", function () {
+  canvas.toBlob((blob) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.download = "dithered_image.png";
+    a.href = url;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, "image/png");
+});
+
 gId("rLvlsRange").addEventListener("input", function () {
   sliderInputSync(gId("rLvlsRange"), gId("rLvlsInput"), "rLvls", undefined, "slider");
   rLvls--;
@@ -119,8 +130,10 @@ function matrixInputLUTCreate() {
   matrixInputLUT = new Float32Array(mY * mX);
 
   for (let y = 0; y < mY; y++) {
+    const yOffs = y * mX;
+
     for (let x = 0; x < mX; x++) {
-      matrixInputLUT[y * mX + x] = (matrixInput[y][x] * div) / 255;
+      matrixInputLUT[yOffs + x] = (matrixInput[y][x] * div) / 255;
     }
   }
 
@@ -190,12 +203,6 @@ gId("useMirror").addEventListener("input", function () {
   varErrDiffsKernel = parseKernelVarErrDiffs(varErrDiffsMatrixInput);
 });
 
-gId("blueNoiseInitArrayInput").addEventListener("input", function () {
-  try {
-    blueNoiseInitArray = JSON.parse(gId("blueNoiseInitArrayInput").value).flat();
-  } catch {} //silence it
-});
-
 gId("blueNoiseWidth").addEventListener("input", function () {
   blueNoiseWidth = Number(gId("blueNoiseWidth").value);
 });
@@ -204,31 +211,24 @@ gId("blueNoiseHeight").addEventListener("input", function () {
   blueNoiseHeight = Number(gId("blueNoiseHeight").value);
 });
 
-gId("blueNoiseAlgo").addEventListener("input", function () {
-  blueNoiseAlgo = gId("blueNoiseAlgo").value;
-});
-
 gId("blueNoiseAlgo").addEventListener("change", function () {
+  blueNoiseAlgo = gId("blueNoiseAlgo").value;
   if (blueNoiseAlgo === "VACluster") {
     gId("blueNoiseInitialSigmaScale").classList.add("disabled");
     gId("blueNoiseSigmaSample").classList.add("disabled");
     gId("blueNoiseIterations").classList.add("disabled");
-    gId("blueNoiseCandidateFillingRatio").classList.add("disabled");
-  } else if (blueNoiseAlgo === "extendedVACluster") {
+  } else if (blueNoiseAlgo === "extendedVACluster" || blueNoiseAlgo === "extendedVACluster2") {
     gId("blueNoiseInitialSigmaScale").classList.remove("disabled");
     gId("blueNoiseSigmaSample").classList.add("disabled");
     gId("blueNoiseIterations").classList.add("disabled");
-    gId("blueNoiseCandidateFillingRatio").classList.remove("disabled");
   } else if (blueNoiseAlgo === "bartWronskiVACluster") {
     gId("blueNoiseInitialSigmaScale").classList.remove("disabled");
     gId("blueNoiseSigmaSample").classList.add("disabled");
     gId("blueNoiseIterations").classList.add("disabled");
-    gId("blueNoiseCandidateFillingRatio").classList.add("disabled");
   } else if (blueNoiseAlgo === "georgievFajardo") {
     gId("blueNoiseInitialSigmaScale").classList.remove("disabled");
     gId("blueNoiseSigmaSample").classList.remove("disabled");
     gId("blueNoiseIterations").classList.remove("disabled");
-    gId("blueNoiseCandidateFillingRatio").classList.add("disabled");
   }
 });
 
