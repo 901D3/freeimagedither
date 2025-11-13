@@ -50,6 +50,61 @@ function bayerGen(size) {
   return seed;
 }
 
+const dotDiffsClassInputLUTCreate = () => {
+  const classHeight = matrixInput.length;
+  const classWidth = matrixInput[0].length;
+
+  // Find max/min class values in the clas matrix input
+  let minClassValue = Infinity;
+  let maxClassValue = -Infinity;
+
+  for (let y = 0; y < classHeight; y++) {
+    for (let x = 0; x < classWidth; x++) {
+      const v = matrixInput[y][x];
+
+      if (v < minClassValue) minClassValue = v;
+      if (v > maxClassValue) maxClassValue = v;
+    }
+  }
+
+  // Save all available class values, ignore skipped class values
+  dotDiffsAvailableClassValues = [];
+  for (let i = minClassValue; i <= maxClassValue; i++) {
+    let exists = false;
+
+    for (let y = 0; y < classHeight && !exists; y++) {
+      for (let x = 0; x < classWidth && !exists; x++) {
+        if (matrixInput[y][x] === i) exists = true;
+      }
+    }
+
+    if (exists) dotDiffsAvailableClassValues.push(i);
+  }
+
+  // [classValue][index of the class value tiled on the canvas]
+  dotDiffsClassMatrixCanvasLUT = [];
+  const classToIndex = [];
+
+  for (let i = 0, length = dotDiffsAvailableClassValues.length; i < length; i++) {
+    dotDiffsClassMatrixCanvasLUT[i] = [];
+    classToIndex[dotDiffsAvailableClassValues[i]] = i;
+  }
+
+  for (let y = 0; y < canvasHeight; y++) {
+    const yOffs = y * canvasWidth;
+    const classY = y % classHeight;
+
+    for (let x = 0; x < canvasWidth; x++) {
+      const classIndex = classToIndex[matrixInput[classY][x % classWidth]];
+      if (!dotDiffsClassMatrixCanvasLUT[classIndex]) {
+        dotDiffsClassMatrixCanvasLUT[classIndex] = [];
+      }
+
+      dotDiffsClassMatrixCanvasLUT[classIndex].push((yOffs + x) << 2);
+    }
+  }
+};
+
 function blueNoiseWrapper() {
   blueNoiseCanvas.width = blueNoiseWidth;
   blueNoiseCanvas.height = blueNoiseHeight;
