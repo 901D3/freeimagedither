@@ -39,10 +39,13 @@ var locales = {
   image_speed: "Speed",
   change_canvas_size: "Change canvas size",
   audio_volume: "Volume",
+
   matrix_thresh: "Matrix Threshhold",
   arithmetic: "Arithmetic",
   err_diffs: "Error Diffusion",
   var_err_diffs: "Variable Error Diffusion",
+  dot_diffs: "Dot Diffusion",
+
   canvas_size_change: "Change canvas size",
   pixelated_render: "Pixelated Rendering",
   canvas_desync: "Canvas Desynchronize",
