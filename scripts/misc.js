@@ -122,25 +122,6 @@ function errDiffsAutoDivWrapper() {
   }
 }
 
-function matrixInputLUTCreate() {
-  const mY = matrixInput.length;
-  const mX = matrixInput[0].length;
-  const div = 255 / divisionInput;
-
-  matrixInputLUT = new Float32Array(mY * mX);
-
-  for (let y = 0; y < mY; y++) {
-    const yOffs = y * mX;
-
-    for (let x = 0; x < mX; x++) {
-      matrixInputLUT[yOffs + x] = (matrixInput[y][x] * div) / 255;
-    }
-  }
-
-  matrixInputLUT.mY = mY;
-  matrixInputLUT.mX = mX;
-}
-
 gId("matrixInput").addEventListener("input", function () {
   try {
     matrixInput = JSON.parse(gId("matrixInput").value);
@@ -150,6 +131,8 @@ gId("matrixInput").addEventListener("input", function () {
   autoDiv = gId("autoDiv").checked;
   autoDivWrapper();
   matrixInputLUTCreate();
+
+  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
 });
 
 gId("divisionInput").addEventListener("input", function () {
@@ -176,23 +159,29 @@ gId("errDiffsMatrixInput").addEventListener("input", function () {
 
   errDiffsAutoDivWrapper();
   errDiffsKernel = parseKernelErrDiffs(errDiffsMatrixInput, errDiffsDivisionInput);
+
+  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
 });
 
 gId("errDiffsDivisionInput").addEventListener("input", function () {
   errDiffsAutoDivWrapper();
   errDiffsKernel = parseKernelErrDiffs(errDiffsMatrixInput, errDiffsDivisionInput);
+
+  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
 });
 
 gId("errDiffsAutoDiv").addEventListener("input", function () {
   errDiffsAutoDiv = gId("errDiffsAutoDiv").checked;
   errDiffsAutoDivWrapper();
+
+  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
 });
 
 gId("varErrDiffsMatrixInput").addEventListener("input", function () {
   try {
     varErrDiffsMatrixInput = JSON.parse(gId("varErrDiffsMatrixInput").value);
   } catch (e) {
-    printLog(e, 1, "red", "red");
+    printLog(e, null, "red", "red");
   }
 
   varErrDiffsKernel = parseKernelVarErrDiffs(varErrDiffsMatrixInput);
@@ -232,6 +221,77 @@ gId("blueNoiseAlgo").addEventListener("change", function () {
   }
 });
 
+function disableAll() {
+  gId("matrix").classList.add("disabled");
+  gId("uploadDitherImage").classList.add("disabled");
+  gId("arithmetic").classList.add("disabled");
+  gId("errDiffs").classList.add("disabled");
+  gId("varErrDiffs").classList.add("disabled");
+  gId("matrixThreshDisp").classList.add("disabled");
+  gId("blueNoiseDisp").classList.add("disabled");
+  gId("arithmeticDisp").classList.add("disabled");
+  gId("errDiffsInputDisp").classList.add("disabled");
+  gId("varErrDiffsInputDisp").classList.add("disabled");
+  gId("lvlsDisp").classList.add("disabled");
+  gId("errLvlsDisp").classList.add("disabled");
+  gId("serpentineDisp").classList.add("disabled");
+  gId("bufferDisp").classList.add("disabled");
+  gId("mirrorDisp").classList.add("disabled");
+}
+
+gId("dither").addEventListener("change", function () {
+  let dropdownValue = gId("dither").value;
+  if (dropdownValue === "none") {
+    disableAll();
+  } else if (dropdownValue === "matrixThreshold") {
+    disableAll();
+    gId("matrix").classList.remove("disabled");
+    gId("uploadDitherImage").classList.remove("disabled");
+    gId("matrixThreshDisp").classList.remove("disabled");
+    gId("lvlsDisp").classList.remove("disabled");
+    if (gId("matrix").value === "blueNoise") {
+      gId("blueNoiseDisp").classList.remove("disabled");
+    }
+  } else if (dropdownValue === "arithmetic") {
+    disableAll();
+    gId("arithmetic").classList.remove("disabled");
+    gId("arithmeticDisp").classList.remove("disabled");
+    gId("lvlsDisp").classList.remove("disabled");
+    gId("linearDisp").classList.remove("disabled");
+  } else if (dropdownValue === "errDiffs") {
+    disableAll();
+    gId("errDiffs").classList.remove("disabled");
+    gId("errDiffsInputDisp").classList.remove("disabled");
+    gId("lvlsDisp").classList.remove("disabled");
+    gId("errLvlsDisp").classList.remove("disabled");
+    gId("linearDisp").classList.remove("disabled");
+    gId("serpentineDisp").classList.remove("disabled");
+    gId("bufferDisp").classList.remove("disabled");
+  } else if (dropdownValue === "varErrDiffs") {
+    disableAll();
+    gId("varErrDiffs").classList.remove("disabled");
+    gId("varErrDiffsInputDisp").classList.remove("disabled");
+    gId("lvlsDisp").classList.remove("disabled");
+    gId("errLvlsDisp").classList.remove("disabled");
+    gId("linearDisp").classList.remove("disabled");
+    gId("serpentineDisp").classList.remove("disabled");
+    gId("bufferDisp").classList.remove("disabled");
+    gId("mirrorDisp").classList.remove("disabled");
+  } else if (dropdownValue === "dotDiffs") {
+    disableAll();
+    gId("matrix").classList.remove("disabled");
+    gId("uploadDitherImage").classList.remove("disabled");
+    gId("matrixThreshDisp").classList.remove("disabled");
+
+    gId("errDiffs").classList.remove("disabled");
+    gId("errDiffsInputDisp").classList.remove("disabled");
+    gId("lvlsDisp").classList.remove("disabled");
+    gId("errLvlsDisp").classList.remove("disabled");
+    gId("linearDisp").classList.remove("disabled");
+    gId("bufferDisp").classList.remove("disabled");
+  }
+});
+
 (function () {
   sliderInputSync(gId("rLvlsRange"), gId("rLvlsInput"), "rLvls", 2, "input");
   sliderInputSync(gId("gLvlsRange"), gId("gLvlsInput"), "gLvls", 2, "input");
@@ -256,6 +316,7 @@ gId("blueNoiseAlgo").addEventListener("change", function () {
   autoDivWrapper();
   errDiffsAutoDivWrapper();
   matrixInputLUTCreate();
+  dotDiffsClassInputLUTCreate();
 
   errDiffsBuffer = [];
   setErrDiffsTarget = (d) => {
