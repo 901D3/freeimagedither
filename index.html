@@ -7,7 +7,23 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/unifont@5.1.0/index.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fontsource/unifont@5.1.0/index.min.css" />
+
+    <link rel="preload" as="script" href="scripts/init.js" />
+    <link rel="preload" as="script" href="scripts/resources/varErrDiffsRsrc.base.js" />
+    <link rel="preload" as="script" href="scripts/resources/varErrDiffsRsrc.ostromoukhov.js" />
+    <link rel="preload" as="script" href="scripts/resources/varErrDiffsRsrc.zhouFang.js" />
+    <link rel="preload" as="script" href="scripts/lib/901D3/binUtils.js" />
+    <link rel="preload" as="script" href="scripts/lib/901D3/blue-noise-utils.js" />
+    <link rel="preload" as="script" href="scripts/lib/901D3/blue-noise-float32.js" />
+    <link rel="preload" as="script" href="scripts/locale.js" />
+    <link rel="preload" as="script" href="scripts/generator.js" />
+    <link rel="preload" as="script" href="scripts/sizing.js" />
+    <link rel="preload" as="script" href="scripts/dither.js" />
+    <link rel="preload" as="script" href="scripts/misc.js" />
+    <link rel="preload" as="script" href="scripts/process.js" />
   </head>
   <body class="display-flex top-bottom-flow" style="gap: 8px">
     <span id="mobileNote" style="opacity: 0.7">Recommend going landscape mode on mobile</span>
@@ -44,6 +60,7 @@
               <option value="arithmetic" data-text="$arithmetic"></option>
               <option value="errDiffs" data-text="$err_diffs"></option>
               <option value="varErrDiffs" data-text="$var_err_diffs"></option>
+              <option value="dotDiffs" data-text="$dot_diffs"></option>
             </select>
           </div>
           <div class="whitehr"></div>
@@ -59,7 +76,31 @@
               <option value="bayer64">Bayer 64²</option>
               <option value="bayer128">Bayer 128²</option>
               <option value="bayer256">Bayer 256²</option>
+
               <option value="blueNoise">Blue Noise</option>
+
+              <option value="cluster">Cluster</option>
+              <option value="fishnet">Fishnet</option>
+              <option value="halftone">Halftone</option>
+
+              <option value="hatchLeft">Hatch Left</option>
+              <option value="hatchRight">Hatch Right</option>
+              <option value="hatchVertical">Hatch Vertical</option>
+              <option value="hatchHorizontal">Hatch Horizontal</option>
+
+              <option value="crossHatchLeft">Cross Hatch Left</option>
+              <option value="crossHatchRight">Cross Hatch Right</option>
+              <option value="crossHatchVertical">Cross Hatch Vertical</option>
+              <option value="crossHatchHorizontal">Cross Hatch Horizontal</option>
+
+              <option value="zigZag4">Zig Zag 4</option>
+              <option value="zigZag8">Zig Zag 8</option>
+              <option value="zigZag16">Zig Zag 16</option>
+
+              <option value="dot4">Dot 4</option>
+              <option value="dot8">Dot 8</option>
+
+              <option value="cool1">cool1</option>
             </select>
           </div>
           <div id="matrixThreshDisp" class="settings_container disabled">
@@ -79,7 +120,10 @@
             accept=".png, .jpg, .jpeg, .webp, .gif, .ico, .bmp, .avif" />
           <div class="whitehr"></div>
           <div id="blueNoiseDisp" class="settings_container disabled">
-            <canvas id="blueNoiseCanvas" data-text="$elN_A" style="border: 3px solid #ff0"></canvas>
+            <canvas
+              id="blueNoiseCanvas"
+              data-text="$elN_A"
+              style="border: 3px solid #ff0"></canvas>
             <div class="settings_label-select">
               <span>Algorithm</span>
               <select id="blueNoiseAlgo">
@@ -89,6 +133,7 @@
                 <option value="georgievFajardo">Georgiev-Fajardo(Relaxation)</option>
               </select>
             </div>
+            <textarea id="blueNoiseCustomKernel" placeholder="2D matrix"></textarea>
             <div class="settings_label-input">
               <span data-text="$width"></span>
               <input type="number" id="blueNoiseWidth" value="64" />
@@ -103,7 +148,11 @@
             </div>
             <div class="settings_label-input">
               <span>Initial sigma scale</span>
-              <input type="number" id="blueNoiseInitialSigmaScale" class="disabled" value="0.3" />
+              <input
+                type="number"
+                id="blueNoiseInitialSigmaScale"
+                class="disabled"
+                value="0.3" />
             </div>
             <div class="settings_label-input">
               <span>Sigma(Image)</span>
@@ -162,6 +211,7 @@
               <option value="xot">Xot(Perf Warning)</option>
               <option value="twoD">Two-Dim</option>
               <option value="oneD">One-Dim</option>
+              <option value="knuth">Knuth(Dot diffusion)</option>
             </select>
           </div>
           <div id="errDiffsInputDisp" class="settings_container disabled">
@@ -198,7 +248,7 @@
             </select>
           </div>
           <div id="varErrDiffsInputDisp" class="settings_container disabled">
-            <textarea id="varErrDiffsMatrixInput" placeholder="3D + 1 matrix"></textarea>
+            <textarea id="varErrDiffsMatrixInput" placeholder="'3D' + 1 matrix"></textarea>
           </div>
           <div id="mirrorDisp" class="settings_checkbox-label disabled">
             <input type="checkbox" id="useMirror" checked="" />
@@ -357,7 +407,12 @@
 
           ditherImageCtx.drawImage(ditherImage, 0, 0);
 
-          const frame = ditherImageCtx.getImageData(0, 0, ditherImageCanvas.width, ditherImageCanvas.height);
+          const frame = ditherImageCtx.getImageData(
+            0,
+            0,
+            ditherImageCanvas.width,
+            ditherImageCanvas.height
+          );
           const imageData = frame.data;
 
           const highest = findHighest(imageData);
