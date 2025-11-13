@@ -123,6 +123,7 @@ var matrixInputLUT;
 var divisionInput = 1;
 var autoDiv;
 var arithmeticInput;
+
 var errDiffsMatrixInput = [[-1]];
 var errDiffsKernel;
 var errDiffsMatrixInputXStart;
@@ -135,6 +136,9 @@ var errDiffsBufferTarget;
 var varErrDiffsMatrixInput = [[-1], 1];
 var varErrDiffsKernel;
 var useMirror;
+
+var dotDiffsClassMatrixCanvasLUT;
+var dotDiffsAvailableClassValues;
 
 var blueNoiseInitArray;
 var blueNoiseWidth = 64;
@@ -168,7 +172,10 @@ let logEntries = [];
 window.addEventListener(
   "touchstart",
   (e) => {
-    if (e.touches.length === 1 && (e.touches[0].clientX < 50 || e.touches[0].clientX > window.innerWidth - 50)) {
+    if (
+      e.touches.length === 1 &&
+      (e.touches[0].clientX < 50 || e.touches[0].clientX > window.innerWidth - 50)
+    ) {
       e.preventDefault();
     }
   },
@@ -221,13 +228,29 @@ function flashChanges(el, fades, time, ...fadeColors) {
 function redFlashChangeText(el, time) {
   if (!el) return false;
 
-  flashChanges(el, 4, time, "rgba(255, 0, 0, 1)", "rgba(255, 0, 0, 0.6)", "rgba(255, 0, 0, 0.3)", "rgba(255, 0, 0, 0.0)");
+  flashChanges(
+    el,
+    4,
+    time,
+    "rgba(255, 0, 0, 1)",
+    "rgba(255, 0, 0, 0.6)",
+    "rgba(255, 0, 0, 0.3)",
+    "rgba(255, 0, 0, 0.0)"
+  );
 }
 
 function orangeFlashChangeText(el, time) {
   if (!el) return false;
 
-  flashChanges(el, 4, time, "rgba(255, 127, 0, 1)", "rgba(255, 127, 0, 0.6)", "rgba(255, 127, 0, 0.3)", "rgba(255, 127, 0, 0)");
+  flashChanges(
+    el,
+    4,
+    time,
+    "rgba(255, 127, 0, 1)",
+    "rgba(255, 127, 0, 0.6)",
+    "rgba(255, 127, 0, 0.3)",
+    "rgba(255, 127, 0, 0)"
+  );
 }
 
 function yellowFlashChangeText(el, time) {
@@ -385,17 +408,6 @@ function noiseArray_1D(width, height, start = 0, end = 255) {
   return array;
 }
 
-function unravelIndex(index, shape) {
-  const coords = [];
-
-  for (let i = shape.length - 1; i >= 0; i--) {
-    coords[i] = index % shape[i];
-    index = floor(index / shape[i]);
-  }
-
-  return coords;
-}
-
 function varSync(input, variable, defaultValue) {
   let value = Number(input.value);
 
@@ -434,62 +446,3 @@ if (bigContainer) {
   });
   observer.observe(bigContainer);
 }
-
-function disableAll() {
-  gId("matrix").classList.add("disabled");
-  gId("uploadDitherImage").classList.add("disabled");
-  gId("arithmetic").classList.add("disabled");
-  gId("errDiffs").classList.add("disabled");
-  gId("varErrDiffs").classList.add("disabled");
-  gId("matrixThreshDisp").classList.add("disabled");
-  gId("blueNoiseDisp").classList.add("disabled");
-  gId("arithmeticDisp").classList.add("disabled");
-  gId("errDiffsInputDisp").classList.add("disabled");
-  gId("varErrDiffsInputDisp").classList.add("disabled");
-  gId("lvlsDisp").classList.add("disabled");
-  gId("errLvlsDisp").classList.add("disabled");
-  gId("serpentineDisp").classList.add("disabled");
-  gId("bufferDisp").classList.add("disabled");
-  gId("mirrorDisp").classList.add("disabled");
-}
-
-gId("dither").addEventListener("change", function () {
-  let dropdownValue = gId("dither").value;
-  if (dropdownValue === "none") {
-    disableAll();
-  } else if (dropdownValue === "matrixThreshold") {
-    disableAll();
-    gId("matrix").classList.remove("disabled");
-    gId("uploadDitherImage").classList.remove("disabled");
-    gId("matrixThreshDisp").classList.remove("disabled");
-    gId("lvlsDisp").classList.remove("disabled");
-    if (gId("matrix").value === "blueNoise") {
-      gId("blueNoiseDisp").classList.remove("disabled");
-    }
-  } else if (dropdownValue === "arithmetic") {
-    disableAll();
-    gId("arithmetic").classList.remove("disabled");
-    gId("arithmeticDisp").classList.remove("disabled");
-    gId("lvlsDisp").classList.remove("disabled");
-    gId("linearDisp").classList.remove("disabled");
-  } else if (dropdownValue === "errDiffs") {
-    disableAll();
-    gId("errDiffs").classList.remove("disabled");
-    gId("errDiffsInputDisp").classList.remove("disabled");
-    gId("lvlsDisp").classList.remove("disabled");
-    gId("errLvlsDisp").classList.remove("disabled");
-    gId("linearDisp").classList.remove("disabled");
-    gId("serpentineDisp").classList.remove("disabled");
-    gId("bufferDisp").classList.remove("disabled");
-  } else if (dropdownValue === "varErrDiffs") {
-    disableAll();
-    gId("varErrDiffs").classList.remove("disabled");
-    gId("varErrDiffsInputDisp").classList.remove("disabled");
-    gId("lvlsDisp").classList.remove("disabled");
-    gId("errLvlsDisp").classList.remove("disabled");
-    gId("linearDisp").classList.remove("disabled");
-    gId("serpentineDisp").classList.remove("disabled");
-    gId("bufferDisp").classList.remove("disabled");
-    gId("mirrorDisp").classList.remove("disabled");
-  }
-});
