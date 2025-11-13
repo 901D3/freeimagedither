@@ -40,7 +40,15 @@ const blueNoiseUtils = (function () {
    * @param {*} radiusHeight
    */
 
-  const _blurWrapInPlace = (inArray, width, height, blurred, kernel, radiusWidth, radiusHeight) => {
+  const _blurWrapInPlace = (
+    inArray,
+    width,
+    height,
+    blurred,
+    kernel,
+    radiusWidth,
+    radiusHeight
+  ) => {
     const kernelHalfWidth = radiusWidth >> 1;
     const kernelHalfHeight = radiusHeight >> 1;
 
@@ -74,18 +82,27 @@ const blueNoiseUtils = (function () {
 
   /**
    * Blur delta updater
-   * 
-   * @param {*} width 
-   * @param {*} height 
-   * @param {*} idx 
-   * @param {*} amount 
-   * @param {*} blurred 
-   * @param {*} kernel 
-   * @param {*} radiusWidth 
-   * @param {*} radiusHeight 
+   *
+   * @param {*} width
+   * @param {*} height
+   * @param {*} idx
+   * @param {*} amount
+   * @param {*} blurred
+   * @param {*} kernel
+   * @param {*} radiusWidth
+   * @param {*} radiusHeight
    */
 
-  const _deltaBlurUpdateInPlace = (width, height, idx, amount, blurred, kernel, radiusWidth, radiusHeight) => {
+  const _deltaBlurUpdateInPlace = (
+    width,
+    height,
+    idx,
+    amount,
+    blurred,
+    kernel,
+    radiusWidth,
+    radiusHeight
+  ) => {
     const inArrayX = idx - Math.floor(idx / width) * width;
     const inArrayY = Math.floor(idx / width);
 
@@ -112,15 +129,15 @@ const blueNoiseUtils = (function () {
   };
 
   /**
-   * 
-   * @param {*} inArray 
-   * @param {*} width 
-   * @param {*} height 
-   * @param {*} idx 
-   * @param {*} sigmaImage 
-   * @param {*} sigmaSample 
-   * @param {*} d 
-   * @returns 
+   *
+   * @param {*} inArray
+   * @param {*} width
+   * @param {*} height
+   * @param {*} idx
+   * @param {*} sigmaImage
+   * @param {*} sigmaSample
+   * @param {*} d
+   * @returns
    */
 
   const _computeEnergySigmaAt = (inArray, width, height, idx, sigmaImage, sigmaSample, d) => {
