@@ -1,3 +1,22 @@
+function matrixInputLUTCreate() {
+  const mY = matrixInput.length;
+  const mX = matrixInput[0].length;
+  const div = 255 / divisionInput;
+
+  matrixInputLUT = new Float32Array(mY * mX);
+
+  for (let y = 0; y < mY; y++) {
+    const yOffs = y * mX;
+
+    for (let x = 0; x < mX; x++) {
+      matrixInputLUT[yOffs + x] = (matrixInput[y][x] * div) / 255;
+    }
+  }
+
+  matrixInputLUT.mY = mY;
+  matrixInputLUT.mX = mX;
+}
+
 function bayerGen(size) {
   let seed = [
     [0, 2],
@@ -42,7 +61,13 @@ function blueNoiseWrapper() {
     document.getElementById("blueNoiseGaussianSigmaRadiusMultiplier").value
   );
 
-  blueNoiseFloat32.initialSigmaScale = Number(document.getElementById("blueNoiseInitialSigmaScale").value);
+  blueNoiseUtils.gaussianSigmaRadiusMultiplier = Number(
+    document.getElementById("blueNoiseGaussianSigmaRadiusMultiplier").value
+  );
+
+  blueNoiseFloat32.initialSigmaScale = Number(
+    document.getElementById("blueNoiseInitialSigmaScale").value
+  );
 
   if (blueNoiseAlgo === "VACluster") {
     result = blueNoiseFloat32.originalVoidAndCluster(
@@ -52,11 +77,16 @@ function blueNoiseWrapper() {
       Number(document.getElementById("blueNoiseDensity").value)
     );
   } else if (blueNoiseAlgo === "extendedVACluster") {
+    let kernel = null;
+    if (document.getElementById("blueNoiseCustomKernel").value) {
+      kernel = JSON.parse(document.getElementById("blueNoiseCustomKernel").value);
+    }
+
     result = blueNoiseFloat32.extendedVoidAndCluster(
       blueNoiseWidth,
       blueNoiseHeight,
       Number(document.getElementById("blueNoiseSigmaImage").value),
-      null,
+      kernel,
       Number(document.getElementById("blueNoiseDensity").value)
     );
   } else if (blueNoiseAlgo === "bartWronskiVACluster") {
@@ -117,4 +147,6 @@ function blueNoiseWrapper() {
   gId("divisionInput").value = highest + 1;
   divisionInput = highest + 1;
   matrixInputLUTCreate();
+
+  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
 }
