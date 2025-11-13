@@ -11,11 +11,12 @@ _Optimized for maximum peformance_
 
 ──────────
 
-### _**Credits:**_
+### _**Reference:**_
 [cs559-5.ppt by University Of Wisconsin](http://research.cs.wisc.edu/graphics/Courses/559-f2002/lectures/cs559-5.ppt)
 
 [dithermark.com](https://www.dithermark.com)
 
+# _Legal notices_
 
 ### **901D3/blue-noise.js**
 
