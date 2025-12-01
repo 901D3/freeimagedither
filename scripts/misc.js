@@ -295,8 +295,6 @@ gId("dither").addEventListener("change", function () {
   useMirror = gId("useMirror").checked;
   autoDivWrapper();
   errDiffsAutoDivWrapper();
-  matrixInputLUTCreate();
-  dotDiffsClassInputLUTCreate();
 
   errDiffsBuffer = [];
   setErrDiffsTarget = (d) => {
@@ -308,9 +306,10 @@ gId("dither").addEventListener("change", function () {
     getBufferValue = () => 0; // always return 0
   }
 
+  blueNoiseWidth = Number(gId("blueNoiseWidth").value);
+  blueNoiseHeight = Number(gId("blueNoiseHeight").value);
+
   try {
     blueNoiseInitArray = JSON.parse(gId("blueNoiseInitArrayInput").value).flat();
   } catch {}
-  blueNoiseWidth = Number(gId("blueNoiseWidth").value);
-  blueNoiseHeight = Number(gId("blueNoiseHeight").value);
 })();
