@@ -1,3 +1,14 @@
+gId("saveImage").addEventListener("click", function () {
+  canvas.toBlob((blob) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.download = "dithered_image.png";
+    a.href = url;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, "image/png");
+});
+
 gId("rLvlsRange").addEventListener("input", function () {
   sliderInputSync(gId("rLvlsRange"), gId("rLvlsInput"), "rLvls", undefined, "slider");
   rLvls--;
@@ -111,23 +122,6 @@ function errDiffsAutoDivWrapper() {
   }
 }
 
-function matrixInputLUTCreate() {
-  const mY = matrixInput.length;
-  const mX = matrixInput[0].length;
-  const div = 255 / divisionInput;
-
-  matrixInputLUT = new Float32Array(mY * mX);
-
-  for (let y = 0; y < mY; y++) {
-    for (let x = 0; x < mX; x++) {
-      matrixInputLUT[y * mX + x] = (matrixInput[y][x] * div) / 255;
-    }
-  }
-
-  matrixInputLUT.mY = mY;
-  matrixInputLUT.mX = mX;
-}
-
 gId("matrixInput").addEventListener("input", function () {
   try {
     matrixInput = JSON.parse(gId("matrixInput").value);
@@ -137,6 +131,8 @@ gId("matrixInput").addEventListener("input", function () {
   autoDiv = gId("autoDiv").checked;
   autoDivWrapper();
   matrixInputLUTCreate();
+
+  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
 });
 
 gId("divisionInput").addEventListener("input", function () {
@@ -163,23 +159,30 @@ gId("errDiffsMatrixInput").addEventListener("input", function () {
 
   errDiffsAutoDivWrapper();
   errDiffsKernel = parseKernelErrDiffs(errDiffsMatrixInput, errDiffsDivisionInput);
+
+  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
 });
 
 gId("errDiffsDivisionInput").addEventListener("input", function () {
   errDiffsAutoDivWrapper();
   errDiffsKernel = parseKernelErrDiffs(errDiffsMatrixInput, errDiffsDivisionInput);
+
+  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
 });
 
 gId("errDiffsAutoDiv").addEventListener("input", function () {
   errDiffsAutoDiv = gId("errDiffsAutoDiv").checked;
   errDiffsAutoDivWrapper();
+  errDiffsKernel = parseKernelErrDiffs(errDiffsMatrixInput, errDiffsDivisionInput);
+
+  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
 });
 
 gId("varErrDiffsMatrixInput").addEventListener("input", function () {
   try {
     varErrDiffsMatrixInput = JSON.parse(gId("varErrDiffsMatrixInput").value);
   } catch (e) {
-    printLog(e, 1, "red", "red");
+    printLog(e, null, "red", "red");
   }
 
   varErrDiffsKernel = parseKernelVarErrDiffs(varErrDiffsMatrixInput);
@@ -190,52 +193,12 @@ gId("useMirror").addEventListener("input", function () {
   varErrDiffsKernel = parseKernelVarErrDiffs(varErrDiffsMatrixInput);
 });
 
-gId("frameRateRange").addEventListener("input", function () {
-  sliderInputSync(
-    gId("frameRateRange"),
-    gId("frameRateInput"),
-    "frameRate",
-    undefined,
-    "slider"
-  );
-  frameTime = 1000 / frameRate;
-});
-
-gId("frameRateInput").addEventListener("input", function () {
-  sliderInputSync(gId("frameRateRange"), gId("frameRateInput"), "frameRate", 30, "input");
-  if (frameRateInput == 0) {
-    frameRate = Infinity;
-  }
-  frameTime = 1000 / frameRate;
-});
-
 gId("blueNoiseWidth").addEventListener("input", function () {
   blueNoiseWidth = Number(gId("blueNoiseWidth").value);
 });
 
 gId("blueNoiseHeight").addEventListener("input", function () {
   blueNoiseHeight = Number(gId("blueNoiseHeight").value);
-});
-
-gId("blueNoiseAlgo").addEventListener("change", function () {
-  blueNoiseAlgo = gId("blueNoiseAlgo").value;
-  if (blueNoiseAlgo === "VACluster") {
-    gId("blueNoiseInitialSigmaScale").classList.add("disabled");
-    gId("blueNoiseSigmaSample").classList.add("disabled");
-    gId("blueNoiseIterations").classList.add("disabled");
-  } else if (blueNoiseAlgo === "extendedVACluster") {
-    gId("blueNoiseInitialSigmaScale").classList.remove("disabled");
-    gId("blueNoiseSigmaSample").classList.add("disabled");
-    gId("blueNoiseIterations").classList.add("disabled");
-  } else if (blueNoiseAlgo === "bartWronskiVACluster") {
-    gId("blueNoiseInitialSigmaScale").classList.remove("disabled");
-    gId("blueNoiseSigmaSample").classList.add("disabled");
-    gId("blueNoiseIterations").classList.add("disabled");
-  } else if (blueNoiseAlgo === "georgievFajardo") {
-    gId("blueNoiseInitialSigmaScale").classList.remove("disabled");
-    gId("blueNoiseSigmaSample").classList.remove("disabled");
-    gId("blueNoiseIterations").classList.remove("disabled");
-  }
 });
 
 function disableAll() {
@@ -323,8 +286,6 @@ gId("dither").addEventListener("change", function () {
   sliderInputSync(gId("bErrLvlsRange"), gId("bErrLvlsInput"), "bErrLvls", 1, "input");
   colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
 
-  sliderInputSync(gId("frameRateRange"), gId("frameRateInput"), "frameRate", 30, "input");
-
   useLinear = gId("useLinear").checked ? true : false;
   useSerpentine = gId("useSerpentine").checked ? true : false;
   useBuffer = gId("useBuffer").checked ? true : false;
@@ -335,6 +296,7 @@ gId("dither").addEventListener("change", function () {
   autoDivWrapper();
   errDiffsAutoDivWrapper();
   matrixInputLUTCreate();
+  dotDiffsClassInputLUTCreate();
 
   errDiffsBuffer = [];
   setErrDiffsTarget = (d) => {
