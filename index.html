@@ -15,9 +15,8 @@
     <link rel="preload" as="script" href="scripts/resources/varErrDiffsRsrc.base.js" />
     <link rel="preload" as="script" href="scripts/resources/varErrDiffsRsrc.ostromoukhov.js" />
     <link rel="preload" as="script" href="scripts/resources/varErrDiffsRsrc.zhouFang.js" />
-    <link rel="preload" as="script" href="scripts/lib/901D3/binUtils.js" />
     <link rel="preload" as="script" href="scripts/lib/901D3/blue-noise-utils.js" />
-    <link rel="preload" as="script" href="scripts/lib/901D3/blue-noise-float32.js" />
+    <link rel="preload" as="script" href="scripts/lib/901D3/blue-noise-float64.js" />
     <link rel="preload" as="script" href="scripts/locale.js" />
     <link rel="preload" as="script" href="scripts/generator.js" />
     <link rel="preload" as="script" href="scripts/sizing.js" />
@@ -26,7 +25,7 @@
     <link rel="preload" as="script" href="scripts/process.js" />
   </head>
   <body class="display-flex top-bottom-flow" style="gap: 8px">
-    <span id="mobileNote" style="opacity: 0.7">Recommend going landscape mode on mobile</span>
+    <span id="mobileNote" style="opacity: 0.7">Landscape mode is recommended on mobile</span>
     <div class="display-flex top-bottom-flow" style="gap: 15px">
       <span
         class="glowfire text-align-center vertical-align-top-margin color font-weight-bold"
@@ -79,9 +78,11 @@
 
               <option value="blueNoise">Blue Noise</option>
 
+              <option value="checkerboard">Checkerboard</option>
               <option value="cluster">Cluster</option>
               <option value="fishnet">Fishnet</option>
               <option value="halftone">Halftone</option>
+              <option value="rylander">Rylander</option>
 
               <option value="hatchLeft">Hatch Left</option>
               <option value="hatchRight">Hatch Right</option>
@@ -127,40 +128,32 @@
             <div class="settings_label-select">
               <span>Algorithm</span>
               <select id="blueNoiseAlgo">
-                <option value="VACluster">Void and Cluster</option>
                 <option value="extendedVACluster">Extended Void and Cluster</option>
-                <option value="bartWronskiVACluster">Bart Wronski's Void and Cluster</option>
                 <option value="georgievFajardo">Georgiev-Fajardo(Relaxation)</option>
               </select>
             </div>
-            <textarea id="blueNoiseCustomKernel" placeholder="2D matrix"></textarea>
+            <textarea
+              id="blueNoiseCustomKernel"
+              placeholder="Convolve kernel. 2D array"></textarea>
             <div class="settings_label-input">
-              <span data-text="$width"></span>
+              <span>Width</span>
               <input type="number" id="blueNoiseWidth" value="64" />
             </div>
             <div class="settings_label-input">
-              <span data-text="$height"></span>
+              <span>Height</span>
               <input type="number" id="blueNoiseHeight" value="64" />
             </div>
             <div class="settings_label-input">
               <span>Sigma radius multiplier</span>
-              <input type="number" id="blueNoiseGaussianSigmaRadiusMultiplier" value="6" />
-            </div>
-            <div class="settings_label-input">
-              <span>Initial sigma scale</span>
-              <input
-                type="number"
-                id="blueNoiseInitialSigmaScale"
-                class="disabled"
-                value="0.3" />
+              <input type="number" id="blueNoiseGaussianSigmaRadiusMultiplier" value="10" />
             </div>
             <div class="settings_label-input">
               <span>Sigma(Image)</span>
               <input type="number" id="blueNoiseSigmaImage" value="1.9" />
             </div>
             <div class="settings_label-input">
-              <span>Sigma sample</span>
-              <input type="number" id="blueNoiseSigmaSample" class="disabled" value="1" />
+              <span>Sigma sample(candidate method)</span>
+              <input type="number" id="blueNoiseSigmaSample" value="1" />
             </div>
             <div class="settings_label-input">
               <span>Density</span>
@@ -168,9 +161,14 @@
             </div>
             <div class="settings_label-input">
               <span>Iterations</span>
-              <input type="number" id="blueNoiseIterations" class="disabled" value="500000" />
+              <input type="number" id="blueNoiseIterations" value="100000" />
             </div>
-            <button onclick="setTimeout(blueNoiseWrapper, 0)">Generate</button>
+            <div class="settings_checkbox-label-input">
+              <input type="checkbox" id="blueNoiseUseAdaptiveSigma" />
+              <span>Use adaptive sigma(uneven dots fix)</span>
+              <input type="number" id="blueNoiseInitialSigmaScale" value="0.4" />
+            </div>
+            <button onclick="blueNoiseWrapper()">Generate</button>
           </div>
           <div class="whitehr"></div>
           <div class="settings_label-select">
@@ -264,11 +262,11 @@
             <span data-text="$buffer"></span>
             <div id="bufferSelectDisp" class="disabled">
               <select id="buffer">
-                <option value="Int8Array" selected="" data-text="$Int8Array"></option>
+                <option value="Int8Array" data-text="$Int8Array"></option>
                 <option value="Int16Array" data-text="$Int16Array"></option>
                 <option value="Int32Array" data-text="$Int32Array"></option>
                 <option value="Float16Array" data-text="$Float16Array"></option>
-                <option value="Float32Array" data-text="$Float32Array"></option>
+                <option value="Float32Array" selected="" data-text="$Float32Array"></option>
                 <option value="Float64Array" data-text="$Float64Array"></option>
               </select>
             </div>
@@ -324,14 +322,14 @@
         </div>
       </div>
       <div class="previewContainer">
-        <div class="mainImage">
+        <div class="mainImage" style="border: 2px solid #ea7010">
           <img id="image" src="test_small.png" crossorigin="anonymous" data-text="$elN_A" />
         </div>
         <div class="firehr"></div>
         <div class="mainCanvas">
           <canvas id="canvas" width="512" height="768" data-text="$elN_A"></canvas>
         </div>
-        <button onclick="process()" data-text="$dither"></button>
+        <button onclick="process()" style="width: 100%" data-text="$dither"></button>
       </div>
     </div>
     <div class="border-style-solid" style="border-width: 2px; border-color: #1070ea">
@@ -347,9 +345,8 @@
   <script src="scripts/resources/varErrDiffsRsrc.zhouFang.js"></script>
 
   <!--Libraries-->
-  <script src="scripts/lib/901D3/binUtils.js"></script>
   <script src="scripts/lib/901D3/blue-noise-utils.js"></script>
-  <script src="scripts/lib/901D3/blue-noise-float32.js"></script>
+  <script src="scripts/lib/901D3/blue-noise-float64.js"></script>
 
   <script src="scripts/locale.js"></script>
   <script src="scripts/generator.js"></script>
