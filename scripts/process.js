@@ -1,12 +1,4 @@
-//const d = {};
-const d = {
-  none: () => {},
-  matrixThreshold: bayer,
-  arithmetic: arithmetic,
-  errDiffs: errDiffs,
-  varErrDiffs: varErrDiffs,
-  dotDiffs: dotDiffs,
-};
+const d = {};
 
 function process() {
   const t0 = performance.now();
