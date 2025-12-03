@@ -22,31 +22,6 @@ function setDisp(i, s) {
   return (gId(i).style.display = s);
 }
 
-function logVar(variable) {
-  let varName = (function () {
-    for (const key in window) {
-      if (window[key] === variable) return key;
-    }
-  })();
-  console.log(varName + ": ");
-  console.log(variable);
-}
-
-function defV(v1, v2, vx) {
-  //v1 for input value, v2 for default value, vx for returning v2 if v1 = vx
-  if (isNaN(vx) || !isFinite(vx)) vx = 1;
-  if (Number.isNaN(v1) || !isFinite(v1) || v1 === vx) return v2;
-  else return v1;
-}
-
-function defVAdv(v1, v2, vmin = 0, vmax = 100, ltvmin = false, gtvmax = false) {
-  if (Number.isNaN(v1) || !isFinite(v1)) return v2;
-  if (ltvmin && v1 < vmin) return v2;
-  if (gtvmax && v1 > vmax) return v2;
-
-  return v1;
-}
-
 let A = 1.7976931348623157e308,
   B = 5e-324;
 
@@ -62,21 +37,17 @@ var ctx = canvas.getContext("2d", {
   colorType: "float16",
   desynchronized: false,
 });
-ctx.imageSmoothingEnabled = false;
 var blueNoiseCanvas = gId("blueNoiseCanvas");
 var blueNoiseCtx = blueNoiseCanvas.getContext("2d");
-var video = gId("video");
+var image = gId("image");
 var ditherDropdown = gId("dither");
 var ditherDropdownValue = "none";
 var canvasStream = canvas.captureStream();
-var canvasWidth = canvas.width;
-var canvasHeight = canvas.height;
-var isProcessing = false;
 var frm = 0;
 var stT = 0;
 var lsUpdT = 0;
 var lLT = 0;
-var telemetry = false;
+var t = false;
 var sqSz;
 
 var {
@@ -120,7 +91,16 @@ var {
   SQRT2,
 } = Math;
 
-var _2PI = PI * 2;
+var recorderMimeType;
+var recorderCodec;
+var recorderFrameRate;
+var recorderVideoBitrate;
+var recorderWebmWriterQuality;
+var isRecording = false;
+var isRendering = false;
+
+var canvasWidth = image.width;
+var canvasHeight = image.height;
 
 var rLvls;
 var gLvls;
@@ -136,12 +116,14 @@ var colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
 var useLinear;
 var useSerpentine;
 var useBuffer;
+var buffer;
 
 var matrixInput = [[1]];
 var matrixInputLUT;
 var divisionInput = 1;
 var autoDiv;
 var arithmeticInput;
+
 var errDiffsMatrixInput = [[-1]];
 var errDiffsKernel;
 var errDiffsMatrixInputXStart;
@@ -158,12 +140,15 @@ var useMirror;
 var dotDiffsClassMatrixCanvasLUT;
 var dotDiffsAvailableClassValues;
 
-var blueNoiseWidth = 64;
-var blueNoiseHeight = 64;
-var blueNoiseAlgo = "VACluster";
+let useDBS = false;
+let DBSSigma = 1;
+let DBSIterations = 1;
+let DBSGaussianSigmaRadiusMultiplier = 3;
 
-var frameRate = 30;
-var frameTime = 1000 / frameRate;
+let blueNoiseInitArray;
+let blueNoiseWidth = 64;
+let blueNoiseHeight = 64;
+let blueNoiseCustomKernel;
 
 var setErrDiffsTarget = () => {};
 var getBufferValue = () => {};
@@ -174,25 +159,18 @@ var getIndex = useSerpentine
   ? (x, yOffs, y) => ((y & 1 ? canvasWidth - 1 - x : x) + yOffs) << 2
   : (x, yOffs) => (x + yOffs) << 2;
 
+var frameRate;
+
+ctx.imageSmoothingEnabled = false;
+
+canvas.width = canvasWidth;
+canvas.height = canvasHeight;
+
 Object.defineProperty(HTMLMediaElement.prototype, "playing", {
   get: function () {
     return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
   },
 });
-
-var recorderFrameRate = 30;
-var recorderFrameTime = 1000 / recorderFrameRate; // Optimization
-var recorderVideoBitrate = 5000000;
-var recorderMimeType = "video/webm";
-var recorderVideoCodec = "vp9";
-var blobQuality = 0.75;
-var isRecording = false;
-var isRendering = false;
-var pausedRendering = false;
-var resolvePromise = null;
-var webCodecsRenderOption = false;
-
-let webCodecsEncoder = null;
 
 let logEntries = [];
 
@@ -238,64 +216,7 @@ function printLog(message, logToConsole, color, flag) {
 
   consoleEl.scrollTop = consoleEl.scrollHeight;
 
-  if (logToConsole === 1) {
-    console.log(message);
-  }
-}
-
-function createInputOmitter(fn, delay = 250) {
-  let waiting = false;
-
-  return function (...args) {
-    if (waiting) return false;
-
-    waiting = true;
-    setTimeout(() => {
-      fn(...args);
-      waiting = false;
-    }, delay);
-  };
-}
-
-function varSync(input, variable, defaultValue) {
-  let value = Number(input.value);
-
-  slider.value = defVAdv(value, defaultValue, sliderMin, sliderMax, true, true);
-  window[variable] = value;
-}
-
-function sliderInputSync(slider, input, variable, defaultValue, source) {
-  let value;
-  source = source.toLowerCase();
-
-  if (source === "input") {
-    value = Number(input.value);
-    const sliderMin = Number(slider.min);
-    const sliderMax = Number(slider.max);
-
-    if (value >= sliderMin && value <= sliderMax) {
-      slider.value = value;
-    } else {
-      const fixed = defVAdv(value, defaultValue, sliderMin, sliderMax, true, true);
-      slider.value = fixed;
-    }
-  } else if (source === "slider") {
-    value = Number(slider.value);
-    input.value = value;
-  }
-
-  window[variable] = value;
-}
-
-// binSearch moved to binUtils.js
-
-function createBlobFromElement(el) {
-  if (!el) return false;
-
-  const blob = new Blob([el.text], {type: "plain/text"});
-  const url = URL.createObjectURL(blob);
-
-  return url;
+  if (logToConsole === 1) console.log(message);
 }
 
 function flashChanges(el, fades, time, ...fadeColors) {
@@ -382,6 +303,27 @@ for (let i = 0; i < 256; i++) {
   linearLUT[i] = (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4) * 255;
 }
 
+function defV(v1, v2, vx) {
+  //v1 for input value, v2 for default value, vx for returning v2 if v1 = vx
+  if (isNaN(vx) || !isFinite(vx)) {
+    vx = 1;
+  }
+  if (Number.isNaN(v1) || !isFinite(v1) || v1 === vx) {
+    printLog("Returned default value of " + v2);
+    return v2;
+  } else {
+    return v1;
+  }
+}
+
+function defVAdv(v1, v2, vmin = 0, vmax = 100, ltvmin = false, gtvmax = false) {
+  if (Number.isNaN(v1) || !isFinite(v1)) return v2;
+  if (ltvmin && v1 < vmin) return v2;
+  if (gtvmax && v1 > vmax) return v2;
+
+  return v1;
+}
+
 function lengthRecursive(inArray) {
   let count = 0;
 
@@ -459,6 +401,48 @@ function findStart_3D(matrix, marker) {
   }
 }
 
+function noiseArray_1D(width, height, start = 0, end = 255) {
+  const sqSz = width * height;
+  const range = end - start;
+  const array = new Int32Array(sqSz);
+
+  for (let i = 0; i < sqSz; i++) {
+    array[i] = start + round(random() * range);
+  }
+
+  return array;
+}
+
+function varSync(input, variable, defaultValue) {
+  let value = Number(input.value);
+
+  slider.value = defVAdv(value, defaultValue, sliderMin, sliderMax, true, true);
+  window[variable] = value;
+}
+
+function sliderInputSync(slider, input, variable, defaultValue, source) {
+  let value;
+  source = source.toLowerCase();
+
+  if (source === "input") {
+    value = Number(input.value);
+    const sliderMin = Number(slider.min);
+    const sliderMax = Number(slider.max);
+
+    if (value >= sliderMin && value <= sliderMax) {
+      slider.value = value;
+    } else {
+      const fixed = defVAdv(value, defaultValue, sliderMin, sliderMax, true, true);
+      slider.value = fixed;
+    }
+  } else if (source === "slider") {
+    value = Number(slider.value);
+    input.value = value;
+  }
+
+  window[variable] = value;
+}
+
 let bigContainer = document.getElementsByClassName("bigContainer")[0];
 
 if (bigContainer) {
@@ -466,20 +450,4 @@ if (bigContainer) {
     document.body.style.minWidth = bigContainer.offsetWidth + "px";
   });
   observer.observe(bigContainer);
-}
-
-function waitForResolve() {
-  return new Promise((resolve) => {
-    resolvePromise = resolve;
-  });
-}
-
-function waitForEvent(target, eventName) {
-  return new Promise((resolve) => {
-    const handler = () => {
-      target.removeEventListener(eventName, handler);
-      resolve();
-    };
-    target.addEventListener(eventName, handler);
-  });
 }
