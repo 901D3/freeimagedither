@@ -109,7 +109,7 @@
             <input id="divisionInput" type="number" value="2" />
             <div class="settings_checkbox-label">
               <input type="checkbox" id="autoDiv" checked="" />
-              <span>Auto</span>
+              <label for="autoDiv">Auto</label>
             </div>
           </div>
           <div class="whitehr"></div>
@@ -165,7 +165,7 @@
             </div>
             <div class="settings_checkbox-label-input">
               <input type="checkbox" id="blueNoiseUseAdaptiveSigma" />
-              <span>Use adaptive sigma(uneven dots fix)</span>
+              <label for="blueNoiseUseAdaptiveSigma">Use adaptive sigma(uneven dots fix)</label>
               <input type="number" id="blueNoiseInitialSigmaScale" value="0.4" />
             </div>
             <button onclick="blueNoiseWrapper()">Generate</button>
@@ -217,7 +217,7 @@
             <input id="errDiffsDivisionInput" type="number" />
             <div class="settings_checkbox-label">
               <input type="checkbox" id="errDiffsAutoDiv" checked="" />
-              <span>Auto</span>
+              <label for="errDiffsAutoDiv">Auto</label>
             </div>
           </div>
           <div id="errLvlsDisp" class="settings_container disabled">
@@ -250,16 +250,16 @@
           </div>
           <div id="mirrorDisp" class="settings_checkbox-label disabled">
             <input type="checkbox" id="useMirror" checked="" />
-            <span data-text="$mirror"></span>
+            <label for="useMirror" data-text="$mirror"></label>
           </div>
           <div class="whitehr"></div>
           <div id="serpentineDisp" class="settings_checkbox-label disabled">
             <input type="checkbox" id="useSerpentine" />
-            <span data-text="$serpentine"></span>
+            <label for="useSerpentine" data-text="$serpentine"></label>
           </div>
           <div id="bufferDisp" class="settings_checkbox-label-select disabled">
             <input type="checkbox" id="useBuffer" />
-            <span data-text="$buffer"></span>
+            <label for="useBuffer" data-text="$buffer"></label>
             <div id="bufferSelectDisp" class="disabled">
               <select id="buffer">
                 <option value="Int8Array" data-text="$Int8Array"></option>
@@ -291,7 +291,15 @@
           </div>
           <div id="linearDisp" class="settings_checkbox-label">
             <input type="checkbox" id="useLinear" title="Linear color space" />
-            <span data-text="$linear"></span>
+            <label for="useLinear" data-text="$linear"></label>
+          </div>
+          <div class="settings_checkbox-label">
+            <input type="checkbox" id="useDBS" />
+            <label for="checkbox">Direct Binary Search</label>
+          </div>
+          <div class="settings_label-input">
+            <span>Iterations</span>
+            <input type="number" id="DBSIterations" value="1" />
           </div>
           <div class="whitehr"></div>
           <div class="settings_container">
@@ -311,7 +319,7 @@
                 id="canvasRendering"
                 checked=""
                 oninput="gId('canvas').style.imageRendering=canvasRendering.checked?'pixelated':'normal'" />
-              <span>Pixelated Rendering</span>
+              <label for="canvasRendering">Pixelated Rendering</label>
             </div>
             <div class="settings_checkbox-label">
               <input type="checkbox" id="desyncOpt" />
