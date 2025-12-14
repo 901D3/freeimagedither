@@ -1,4 +1,12 @@
-const d = {};
+//const d = {};
+const d = {
+  none: () => {},
+  matrixThreshold: bayer,
+  arithmetic: arithmetic,
+  errDiffs: errDiffs,
+  varErrDiffs: varErrDiffs,
+  dotDiffs: dotDiffs,
+};
 
 function process() {
   const t0 = performance.now();
@@ -60,7 +68,7 @@ function processFrame() {
   }
 
   if (useDBS) {
-    blueNoiseFloat64.directBinarySearch(
+    BlueNoiseFloat64.directBinarySearch(
       rChannel,
       rChannelDithered,
       canvasWidth,
@@ -70,7 +78,7 @@ function processFrame() {
       blueNoiseCustomKernel
     );
 
-    blueNoiseFloat64.directBinarySearch(
+    BlueNoiseFloat64.directBinarySearch(
       gChannel,
       gChannelDithered,
       canvasWidth,
@@ -80,7 +88,7 @@ function processFrame() {
       blueNoiseCustomKernel
     );
 
-    blueNoiseFloat64.directBinarySearch(
+    BlueNoiseFloat64.directBinarySearch(
       bChannel,
       bChannelDithered,
       canvasWidth,
