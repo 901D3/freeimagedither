@@ -57,7 +57,7 @@ function processFrame() {
     }
 
     for (let i = 0; i < DBSIterations; i++) {
-      BlueNoiseFloat64.directBinarySearch(
+      BlueNoiseFloat64.directBinarySearchInPlace(
         rChannel,
         rChannelDithered,
         customIndexesArray,
@@ -67,7 +67,7 @@ function processFrame() {
         blueNoiseCustomKernel
       );
 
-      BlueNoiseFloat64.directBinarySearch(
+      BlueNoiseFloat64.directBinarySearchInPlace(
         gChannel,
         gChannelDithered,
         customIndexesArray,
@@ -77,7 +77,7 @@ function processFrame() {
         blueNoiseCustomKernel
       );
 
-      BlueNoiseFloat64.directBinarySearch(
+      BlueNoiseFloat64.directBinarySearchInPlace(
         bChannel,
         bChannelDithered,
         customIndexesArray,
