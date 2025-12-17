@@ -201,6 +201,18 @@ gId("blueNoiseHeight").addEventListener("input", function () {
   blueNoiseHeight = Number(gId("blueNoiseHeight").value);
 });
 
+gId("useDBS").addEventListener("change", function () {
+  useDBS = gId("useDBS").checked;
+
+  if (useDBS) {
+    gId("blueNoiseDisp").classList.remove("disabled");
+  } else if (!useDBS && gId("matrix").value === "blueNoise") {
+    gId("blueNoiseDisp").classList.remove("disabled");
+  } else {
+    gId("blueNoiseDisp").classList.add("disabled");
+  }
+});
+
 function disableAll() {
   gId("matrix").classList.add("disabled");
   gId("uploadDitherImage").classList.add("disabled");
