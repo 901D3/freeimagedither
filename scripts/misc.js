@@ -14,6 +14,7 @@ gId("rLvlsRange").addEventListener("input", function () {
   rLvls--;
   colorLimitArray = [rLvls, gLvls, bLvls];
 });
+
 gId("rLvlsInput").addEventListener("input", function () {
   sliderInputSync(gId("rLvlsRange"), gId("rLvlsInput"), "rLvls", 2, "input");
   rLvls--;
@@ -25,6 +26,7 @@ gId("gLvlsRange").addEventListener("input", function () {
   gLvls--;
   colorLimitArray = [rLvls, gLvls, bLvls];
 });
+
 gId("gLvlsInput").addEventListener("input", function () {
   sliderInputSync(gId("gLvlsRange"), gId("gLvlsInput"), "gLvls", 2, "input");
   gLvls--;
@@ -36,6 +38,7 @@ gId("bLvlsRange").addEventListener("input", function () {
   bLvls--;
   colorLimitArray = [rLvls, gLvls, bLvls];
 });
+
 gId("bLvlsInput").addEventListener("input", function () {
   sliderInputSync(gId("bLvlsRange"), gId("bLvlsInput"), "bLvls", 2, "input");
   bLvls--;
@@ -46,6 +49,7 @@ gId("rErrLvlsRange").addEventListener("input", function () {
   sliderInputSync(gId("rErrLvlsRange"), gId("rErrLvlsInput"), "rErrLvls", undefined, "slider");
   colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
 });
+
 gId("rErrLvlsInput").addEventListener("input", function () {
   sliderInputSync(gId("rErrLvlsRange"), gId("rErrLvlsInput"), "rErrLvls", 1, "input");
   colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
@@ -55,6 +59,7 @@ gId("gErrLvlsRange").addEventListener("input", function () {
   sliderInputSync(gId("gErrLvlsRange"), gId("gErrLvlsInput"), "gErrLvls", undefined, "slider");
   colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
 });
+
 gId("gErrLvlsInput").addEventListener("input", function () {
   sliderInputSync(gId("gErrLvlsRange"), gId("gErrLvlsInput"), "gErrLvls", 1, "input");
   colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
@@ -64,6 +69,7 @@ gId("bErrLvlsRange").addEventListener("input", function () {
   sliderInputSync(gId("bErrLvlsRange"), gId("bErrLvlsInput"), "bErrLvls", undefined, "slider");
   colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
 });
+
 gId("bErrLvlsInput").addEventListener("input", function () {
   sliderInputSync(gId("bErrLvlsRange"), gId("bErrLvlsInput"), "bErrLvls", 1, "input");
   colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
@@ -71,32 +77,28 @@ gId("bErrLvlsInput").addEventListener("input", function () {
 
 gId("useLinear").addEventListener("input", function () {
   useLinear = gId("useLinear").checked;
-  process();
 });
 
 gId("useSerpentine").addEventListener("input", function () {
   useSerpentine = gId("useSerpentine").checked;
-  process();
 });
 
 gId("useBuffer").addEventListener("input", function () {
   useBuffer = gId("useBuffer").checked;
+
   if (useBuffer) {
     gId("bufferSelectDisp").classList.remove("disabled");
     errDiffsBuffer = bufferChange(canvasWidth, canvasHeight);
-    setErrDiffsTarget = () => {
-      errDiffsBufferTarget = errDiffsBuffer;
-    };
+
+    errDiffsBufferTarget = errDiffsBuffer;
     getBufferValue = (i, c) => errDiffsBuffer[i + c];
   } else {
     gId("bufferSelectDisp").classList.add("disabled");
-    errDiffsBuffer = [];
-    setErrDiffsTarget = (d) => {
-      errDiffsBufferTarget = d;
-    };
+    errDiffsBuffer = null;
+
+    setErrDiffsTarget = (d) => (errDiffsBufferTarget = d);
     getBufferValue = () => 0;
   }
-  process();
 });
 
 gId("buffer").addEventListener("change", function () {
@@ -213,6 +215,28 @@ gId("useDBS").addEventListener("change", function () {
   }
 });
 
+gId("blueNoiseGaussianSigmaRadiusMultiplier").addEventListener("change", function () {
+  DBSGaussianSigmaRadiusMultiplier = Number(
+    gId("blueNoiseGaussianSigmaRadiusMultiplier").value
+  );
+
+  blueNoiseFloat64.gaussianSigmaRadiusMultiplier = DBSGaussianSigmaRadiusMultiplier;
+});
+
+gId("blueNoiseSigmaImage").addEventListener("change", function () {
+  DBSSigma = Number(gId("blueNoiseSigmaImage").value);
+});
+
+gId("DBSIterations").addEventListener("change", function () {
+  DBSIterations = Number(gId("DBSIterations").value);
+});
+
+gId("blueNoiseCustomKernel").addEventListener("input", function () {
+  if (document.getElementById("blueNoiseCustomKernel").value) {
+    blueNoiseCustomKernel = JSON.parse(document.getElementById("blueNoiseCustomKernel").value);
+  }
+});
+
 function disableAll() {
   gId("matrix").classList.add("disabled");
   gId("uploadDitherImage").classList.add("disabled");
@@ -241,6 +265,7 @@ gId("dither").addEventListener("change", function () {
     gId("uploadDitherImage").classList.remove("disabled");
     gId("matrixThreshDisp").classList.remove("disabled");
     gId("lvlsDisp").classList.remove("disabled");
+    if (useDBS) gId("blueNoiseDisp").classList.remove("disabled");
     if (gId("matrix").value === "blueNoise") {
       gId("blueNoiseDisp").classList.remove("disabled");
     }
@@ -250,6 +275,7 @@ gId("dither").addEventListener("change", function () {
     gId("arithmeticDisp").classList.remove("disabled");
     gId("lvlsDisp").classList.remove("disabled");
     gId("linearDisp").classList.remove("disabled");
+    if (useDBS) gId("blueNoiseDisp").classList.remove("disabled");
   } else if (dropdownValue === "errDiffs") {
     disableAll();
     gId("errDiffs").classList.remove("disabled");
@@ -259,6 +285,7 @@ gId("dither").addEventListener("change", function () {
     gId("linearDisp").classList.remove("disabled");
     gId("serpentineDisp").classList.remove("disabled");
     gId("bufferDisp").classList.remove("disabled");
+    if (useDBS) gId("blueNoiseDisp").classList.remove("disabled");
   } else if (dropdownValue === "varErrDiffs") {
     disableAll();
     gId("varErrDiffs").classList.remove("disabled");
@@ -269,6 +296,7 @@ gId("dither").addEventListener("change", function () {
     gId("serpentineDisp").classList.remove("disabled");
     gId("bufferDisp").classList.remove("disabled");
     gId("mirrorDisp").classList.remove("disabled");
+    if (useDBS) gId("blueNoiseDisp").classList.remove("disabled");
   } else if (dropdownValue === "dotDiffs") {
     disableAll();
     gId("matrix").classList.remove("disabled");
@@ -281,6 +309,7 @@ gId("dither").addEventListener("change", function () {
     gId("errLvlsDisp").classList.remove("disabled");
     gId("linearDisp").classList.remove("disabled");
     gId("bufferDisp").classList.remove("disabled");
+    if (useDBS) gId("blueNoiseDisp").classList.remove("disabled");
   }
 });
 
