@@ -156,17 +156,25 @@
               <input type="number" id="blueNoiseSigmaSample" value="1" />
             </div>
             <div class="settings_label-input">
-              <span>Density</span>
-              <input type="number" id="blueNoiseDensity" value="0.1" />
+              <span>Samples</span>
+              <input type="number" id="blueNoiseSamples" value="100" />
             </div>
             <div class="settings_label-input">
               <span>Iterations</span>
-              <input type="number" id="blueNoiseIterations" value="100000" />
+              <input type="number" id="blueNoiseIterations" value="15" />
+            </div>
+            <div class="settings_label-input">
+              <span>MBC Candidates</span>
+              <input type="number" id="blueNoiseMBCCandidates" value="20" />
+            </div>
+            <div class="settings_label-input">
+              <span>P Norm</span>
+              <input type="number" id="blueNoisePNorm" value="0.5" />
             </div>
             <div class="settings_checkbox-label-input">
               <input type="checkbox" id="blueNoiseUseAdaptiveSigma" />
-              <label for="blueNoiseUseAdaptiveSigma">Use adaptive sigma(uneven dots fix)</label>
-              <input type="number" id="blueNoiseInitialSigmaScale" value="0.4" />
+              <span>Use adaptive sigma(uneven dots fix)</span>
+              <input type="number" id="blueNoiseInitialSigmaScale" value="0.5" />
             </div>
             <button onclick="blueNoiseWrapper()">Generate</button>
           </div>
@@ -209,7 +217,13 @@
               <option value="xot">Xot(Perf Warning)</option>
               <option value="twoD">Two-Dim</option>
               <option value="oneD">One-Dim</option>
-              <option value="knuth">Knuth(Dot diffusion)</option>
+              <option value="knuth">Knuth</option>
+              <option value="box3">Box 3²</option>
+              <option value="box5">Box 5²</option>
+              <option value="box7">Box 7²</option>
+              <option value="box9">Box 9²</option>
+              <option value="cross">Cross</option>
+              <option value="diagonalCross">Diagonal Cross</option>
             </select>
           </div>
           <div id="errDiffsInputDisp" class="settings_container disabled">
