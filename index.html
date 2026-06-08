@@ -15,8 +15,6 @@
     <link rel="preload" as="script" href="scripts/resources/varErrDiffsRsrc-base.js" />
     <link rel="preload" as="script" href="scripts/resources/varErrDiffsRsrc-ostromoukhov.js" />
     <link rel="preload" as="script" href="scripts/resources/varErrDiffsRsrc-zhouFang.js" />
-    <link rel="preload" as="script" href="scripts/lib/901D3/blue-noise-utils.js" />
-    <link rel="preload" as="script" href="scripts/lib/901D3/blue-noise-float64.js" />
     <link rel="preload" as="script" href="scripts/generator.js" />
     <link rel="preload" as="script" href="scripts/dither.js" />
     <link rel="preload" as="script" href="scripts/locale.js" />
@@ -76,8 +74,6 @@
               <option value="bayer128">Bayer 128²</option>
               <option value="bayer256">Bayer 256²</option>
 
-              <option value="blueNoise">Blue Noise</option>
-
               <option value="checkerboard">Checkerboard</option>
               <option value="cluster">Cluster</option>
               <option value="fishnet">Fishnet</option>
@@ -119,65 +115,6 @@
             class="height-fit-content disabled"
             title=".png, .jpg, .jpeg, .webp, .gif, .ico, .bmp, .avif"
             accept=".png, .jpg, .jpeg, .webp, .gif, .ico, .bmp, .avif" />
-          <div class="whitehr"></div>
-          <div id="blueNoiseDisp" class="settings_container disabled">
-            <canvas
-              id="blueNoiseCanvas"
-              data-text="$elN_A"
-              style="border: 3px solid #ff0"></canvas>
-            <div class="settings_label-select">
-              <span>Algorithm</span>
-              <select id="blueNoiseAlgo">
-                <option value="extendedVACluster">Extended Void and Cluster</option>
-                <option value="georgievFajardo">Georgiev-Fajardo(Relaxation)</option>
-              </select>
-            </div>
-            <textarea
-              id="blueNoiseCustomKernel"
-              placeholder="Convolve kernel. 2D array"></textarea>
-            <div class="settings_label-input">
-              <span>Width</span>
-              <input type="number" id="blueNoiseWidth" value="64" />
-            </div>
-            <div class="settings_label-input">
-              <span>Height</span>
-              <input type="number" id="blueNoiseHeight" value="64" />
-            </div>
-            <div class="settings_label-input">
-              <span>Sigma radius multiplier</span>
-              <input type="number" id="blueNoiseGaussianSigmaRadiusMultiplier" value="10" />
-            </div>
-            <div class="settings_label-input">
-              <span>Sigma(Image)</span>
-              <input type="number" id="blueNoiseSigmaImage" value="1.9" />
-            </div>
-            <div class="settings_label-input">
-              <span>Sigma sample(candidate method)</span>
-              <input type="number" id="blueNoiseSigmaSample" value="1" />
-            </div>
-            <div class="settings_label-input">
-              <span>Samples</span>
-              <input type="number" id="blueNoiseSamples" value="100" />
-            </div>
-            <div class="settings_label-input">
-              <span>Iterations</span>
-              <input type="number" id="blueNoiseIterations" value="15" />
-            </div>
-            <div class="settings_label-input">
-              <span>MBC Candidates</span>
-              <input type="number" id="blueNoiseMBCCandidates" value="20" />
-            </div>
-            <div class="settings_label-input">
-              <span>P Norm</span>
-              <input type="number" id="blueNoisePNorm" value="0.5" />
-            </div>
-            <div class="settings_checkbox-label-input">
-              <input type="checkbox" id="blueNoiseUseAdaptiveSigma" />
-              <label for="blueNoiseUseAdaptiveSigma">Use adaptive sigma(uneven dots fix)</label>
-              <input type="number" id="blueNoiseInitialSigmaScale" value="0.4" />
-            </div>
-            <button onclick="blueNoiseWrapper()">Generate</button>
-          </div>
           <div class="whitehr"></div>
           <div class="settings_label-select">
             <span data-text="$arithmetic"></span>
