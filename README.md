@@ -3,8 +3,6 @@
 
 Basically an image-only dithering tool, forked from [github.com/901D3/freevideodither](https://github.com/901D3/freevideodither)
 
-_Optimized for maximum peformance_
-
 <img width="1024" height="576" alt="image" src="https://raw.githubusercontent.com/901D3/freeimagedither/refs/heads/main/out/bayer16_576.png" />
 <img width="1024" height="576" alt="image" src="https://raw.githubusercontent.com/901D3/freeimagedither/refs/heads/main/out/blue_noise_576.png" />
 <img width="1024" height="576" alt="image" src="https://raw.githubusercontent.com/901D3/freeimagedither/refs/heads/main/out/arithmetic_add_576.png" />
