@@ -223,7 +223,6 @@ gId("dither").addEventListener("change", function () {
     gId("uploadDitherImage").classList.remove("disabled");
     gId("matrixThreshDisp").classList.remove("disabled");
     gId("lvlsDisp").classList.remove("disabled");
-    }
   } else if (dropdownValue === "arithmetic") {
     disableAll();
     gId("arithmetic").classList.remove("disabled");
