@@ -37,8 +37,6 @@ var ctx = canvas.getContext("2d", {
   colorType: "float16",
   desynchronized: false,
 });
-var blueNoiseCanvas = gId("blueNoiseCanvas");
-var blueNoiseCtx = blueNoiseCanvas.getContext("2d");
 var image = gId("image");
 var ditherDropdown = gId("dither");
 var ditherDropdownValue = "none";
