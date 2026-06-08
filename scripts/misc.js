@@ -195,47 +195,6 @@ gId("useMirror").addEventListener("input", function () {
   varErrDiffsKernel = parseKernelVarErrDiffs(varErrDiffsMatrixInput);
 });
 
-gId("blueNoiseWidth").addEventListener("input", function () {
-  blueNoiseWidth = Number(gId("blueNoiseWidth").value);
-});
-
-gId("blueNoiseHeight").addEventListener("input", function () {
-  blueNoiseHeight = Number(gId("blueNoiseHeight").value);
-});
-
-gId("useDBS").addEventListener("change", function () {
-  useDBS = gId("useDBS").checked;
-
-  if (useDBS) {
-    gId("blueNoiseDisp").classList.remove("disabled");
-  } else if (!useDBS && gId("matrix").value === "blueNoise") {
-    gId("blueNoiseDisp").classList.remove("disabled");
-  } else {
-    gId("blueNoiseDisp").classList.add("disabled");
-  }
-});
-
-gId("blueNoiseGaussianSigmaRadiusMultiplier").addEventListener("change", function () {
-  DBSGaussianSigmaRadiusMultiplier = Number(
-    gId("blueNoiseGaussianSigmaRadiusMultiplier").value
-  );
-
-  BlueNoiseFloat64.gaussianSigmaRadiusMultiplier = DBSGaussianSigmaRadiusMultiplier;
-});
-
-gId("blueNoiseSigmaImage").addEventListener("change", function () {
-  DBSSigma = Number(gId("blueNoiseSigmaImage").value);
-});
-
-gId("DBSIterations").addEventListener("change", function () {
-  DBSIterations = Number(gId("DBSIterations").value);
-});
-
-gId("blueNoiseCustomKernel").addEventListener("input", function () {
-  if (document.getElementById("blueNoiseCustomKernel").value) {
-    blueNoiseCustomKernel = JSON.parse(document.getElementById("blueNoiseCustomKernel").value);
-  }
-});
 
 function disableAll() {
   gId("matrix").classList.add("disabled");
@@ -244,7 +203,6 @@ function disableAll() {
   gId("errDiffs").classList.add("disabled");
   gId("varErrDiffs").classList.add("disabled");
   gId("matrixThreshDisp").classList.add("disabled");
-  gId("blueNoiseDisp").classList.add("disabled");
   gId("arithmeticDisp").classList.add("disabled");
   gId("errDiffsInputDisp").classList.add("disabled");
   gId("varErrDiffsInputDisp").classList.add("disabled");
@@ -265,9 +223,6 @@ gId("dither").addEventListener("change", function () {
     gId("uploadDitherImage").classList.remove("disabled");
     gId("matrixThreshDisp").classList.remove("disabled");
     gId("lvlsDisp").classList.remove("disabled");
-    if (useDBS) gId("blueNoiseDisp").classList.remove("disabled");
-    if (gId("matrix").value === "blueNoise") {
-      gId("blueNoiseDisp").classList.remove("disabled");
     }
   } else if (dropdownValue === "arithmetic") {
     disableAll();
@@ -275,7 +230,6 @@ gId("dither").addEventListener("change", function () {
     gId("arithmeticDisp").classList.remove("disabled");
     gId("lvlsDisp").classList.remove("disabled");
     gId("linearDisp").classList.remove("disabled");
-    if (useDBS) gId("blueNoiseDisp").classList.remove("disabled");
   } else if (dropdownValue === "errDiffs") {
     disableAll();
     gId("errDiffs").classList.remove("disabled");
@@ -285,7 +239,6 @@ gId("dither").addEventListener("change", function () {
     gId("linearDisp").classList.remove("disabled");
     gId("serpentineDisp").classList.remove("disabled");
     gId("bufferDisp").classList.remove("disabled");
-    if (useDBS) gId("blueNoiseDisp").classList.remove("disabled");
   } else if (dropdownValue === "varErrDiffs") {
     disableAll();
     gId("varErrDiffs").classList.remove("disabled");
@@ -296,7 +249,6 @@ gId("dither").addEventListener("change", function () {
     gId("serpentineDisp").classList.remove("disabled");
     gId("bufferDisp").classList.remove("disabled");
     gId("mirrorDisp").classList.remove("disabled");
-    if (useDBS) gId("blueNoiseDisp").classList.remove("disabled");
   } else if (dropdownValue === "dotDiffs") {
     disableAll();
     gId("matrix").classList.remove("disabled");
@@ -309,7 +261,6 @@ gId("dither").addEventListener("change", function () {
     gId("errLvlsDisp").classList.remove("disabled");
     gId("linearDisp").classList.remove("disabled");
     gId("bufferDisp").classList.remove("disabled");
-    if (useDBS) gId("blueNoiseDisp").classList.remove("disabled");
   }
 });
 
@@ -346,11 +297,4 @@ gId("dither").addEventListener("change", function () {
   } else {
     getBufferValue = () => 0; // always return 0
   }
-
-  blueNoiseWidth = Number(gId("blueNoiseWidth").value);
-  blueNoiseHeight = Number(gId("blueNoiseHeight").value);
-
-  try {
-    blueNoiseInitArray = JSON.parse(gId("blueNoiseInitArrayInput").value).flat();
-  } catch {}
 })();
