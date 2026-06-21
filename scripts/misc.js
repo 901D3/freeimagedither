@@ -1,299 +1,293 @@
-gId("saveImage").addEventListener("click", function () {
+document.getElementById("saveImage").addEventListener("click", function () {
   canvas.toBlob((blob) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.download = "dithered_image.png";
+    a.download = crypto.randomUUID() + ".png";
     a.href = url;
     a.click();
     URL.revokeObjectURL(url);
   }, "image/png");
 });
 
-gId("rLvlsRange").addEventListener("input", function () {
-  sliderInputSync(gId("rLvlsRange"), gId("rLvlsInput"), "rLvls", undefined, "slider");
-  rLvls--;
-  colorLimitArray = [rLvls, gLvls, bLvls];
-});
-
-gId("rLvlsInput").addEventListener("input", function () {
-  sliderInputSync(gId("rLvlsRange"), gId("rLvlsInput"), "rLvls", 2, "input");
-  rLvls--;
-  colorLimitArray = [rLvls, gLvls, bLvls];
-});
-
-gId("gLvlsRange").addEventListener("input", function () {
-  sliderInputSync(gId("gLvlsRange"), gId("gLvlsInput"), "gLvls", undefined, "slider");
-  gLvls--;
-  colorLimitArray = [rLvls, gLvls, bLvls];
-});
-
-gId("gLvlsInput").addEventListener("input", function () {
-  sliderInputSync(gId("gLvlsRange"), gId("gLvlsInput"), "gLvls", 2, "input");
-  gLvls--;
-  colorLimitArray = [rLvls, gLvls, bLvls];
-});
-
-gId("bLvlsRange").addEventListener("input", function () {
-  sliderInputSync(gId("bLvlsRange"), gId("bLvlsInput"), "bLvls", undefined, "slider");
-  bLvls--;
-  colorLimitArray = [rLvls, gLvls, bLvls];
-});
-
-gId("bLvlsInput").addEventListener("input", function () {
-  sliderInputSync(gId("bLvlsRange"), gId("bLvlsInput"), "bLvls", 2, "input");
-  bLvls--;
-  colorLimitArray = [rLvls, gLvls, bLvls];
-});
-
-gId("rErrLvlsRange").addEventListener("input", function () {
-  sliderInputSync(gId("rErrLvlsRange"), gId("rErrLvlsInput"), "rErrLvls", undefined, "slider");
-  colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
-});
-
-gId("rErrLvlsInput").addEventListener("input", function () {
-  sliderInputSync(gId("rErrLvlsRange"), gId("rErrLvlsInput"), "rErrLvls", 1, "input");
-  colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
-});
-
-gId("gErrLvlsRange").addEventListener("input", function () {
-  sliderInputSync(gId("gErrLvlsRange"), gId("gErrLvlsInput"), "gErrLvls", undefined, "slider");
-  colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
-});
-
-gId("gErrLvlsInput").addEventListener("input", function () {
-  sliderInputSync(gId("gErrLvlsRange"), gId("gErrLvlsInput"), "gErrLvls", 1, "input");
-  colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
-});
-
-gId("bErrLvlsRange").addEventListener("input", function () {
-  sliderInputSync(gId("bErrLvlsRange"), gId("bErrLvlsInput"), "bErrLvls", undefined, "slider");
-  colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
-});
-
-gId("bErrLvlsInput").addEventListener("input", function () {
-  sliderInputSync(gId("bErrLvlsRange"), gId("bErrLvlsInput"), "bErrLvls", 1, "input");
-  colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
-});
-
-gId("useLinear").addEventListener("input", function () {
-  useLinear = gId("useLinear").checked;
-});
-
-gId("useSerpentine").addEventListener("input", function () {
-  useSerpentine = gId("useSerpentine").checked;
-});
-
-gId("useBuffer").addEventListener("input", function () {
-  useBuffer = gId("useBuffer").checked;
-
-  if (useBuffer) {
-    gId("bufferSelectDisp").classList.remove("disabled");
-    errDiffsBuffer = bufferChange(canvasWidth, canvasHeight);
-
-    errDiffsBufferTarget = errDiffsBuffer;
-    getBufferValue = (i, c) => errDiffsBuffer[i + c];
-  } else {
-    gId("bufferSelectDisp").classList.add("disabled");
-    errDiffsBuffer = null;
-
-    setErrDiffsTarget = (d) => (errDiffsBufferTarget = d);
-    getBufferValue = () => 0;
+document.getElementById('RCountSlider').addEventListener('input',
+  function () {
+    gCtx.rCount = SliderInputSync(document.getElementById('RCountSlider'), document.getElementById('RCountInput'), undefined, 'slider');
+    CompilePalette();
   }
-});
+);
 
-gId("buffer").addEventListener("change", function () {
-  buffer = gId("buffer").value;
-  errDiffsBuffer = bufferChange(canvasWidth, canvasHeight);
-});
-
-function autoDivWrapper() {
-  if (autoDiv) {
-    divisionInput = findHighest(matrixInput.flat()) + 1;
-    gId("divisionInput").value = findHighest(matrixInput.flat()) + 1;
-  } else if (!autoDiv) {
-    divisionInput = Number(gId("divisionInput").value);
+document.getElementById('RCountInput').addEventListener('input',
+  function () {
+    gCtx.rCount = SliderInputSync(document.getElementById('RCountSlider'), document.getElementById('RCountInput'), 2, 'input');
+    CompilePalette();
   }
-}
+);
 
-function errDiffsAutoDivWrapper() {
-  if (errDiffsAutoDiv) {
-    errDiffsDivisionInput = matrixSum_2D(errDiffsMatrixInput) + 1;
-    gId("errDiffsDivisionInput").value = matrixSum_2D(errDiffsMatrixInput) + 1;
-  } else if (!errDiffsAutoDiv) {
-    errDiffsDivisionInput = Number(gId("errDiffsDivisionInput").value);
+document.getElementById('GCountSlider').addEventListener('input',
+  function () {
+    gCtx.gCount = SliderInputSync(document.getElementById('GCountSlider'), document.getElementById('GCountInput'), undefined, 'slider');
+    CompilePalette();
   }
-}
+);
 
-gId("matrixInput").addEventListener("input", function () {
-  try {
-    matrixInput = JSON.parse(gId("matrixInput").value);
-  } catch (e) {
-    printLog(e, 1, "red", "red");
+document.getElementById('GCountInput').addEventListener('input',
+  function () {
+    gCtx.gCount = SliderInputSync(document.getElementById('GCountSlider'), document.getElementById('GCountInput'), 2, 'input');
+    CompilePalette();
   }
-  autoDiv = gId("autoDiv").checked;
-  autoDivWrapper();
-  matrixInputLUTCreate();
+);
 
-  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
-});
+document.getElementById('BCountSlider').addEventListener('input',
+  function () {
+    gCtx.bCount = SliderInputSync(document.getElementById('BCountSlider'), document.getElementById('BCountInput'), undefined, 'slider');
+    CompilePalette();
+  }
+);
 
-gId("divisionInput").addEventListener("input", function () {
-  autoDivWrapper();
-  matrixInputLUTCreate();
-});
+document.getElementById('BCountInput').addEventListener('input',
+  function () {
+    gCtx.bCount = SliderInputSync(document.getElementById('BCountSlider'), document.getElementById('BCountInput'), 2, 'input');
+    CompilePalette();
+  }
+);
 
-gId("autoDiv").addEventListener("input", function () {
-  autoDiv = gId("autoDiv").checked;
-  autoDivWrapper();
-  matrixInputLUTCreate();
-});
+document.getElementById('UseLinear').addEventListener('input',
+  function () { gCtx.linear = document.getElementById('UseLinear').checked; });
 
-gId("arithmeticInput").addEventListener("input", function () {
-  arithmeticInput = gId("arithmeticInput").value;
-});
+document.getElementById('UseSerpentine').addEventListener('input',
+  function () {
+    gCtx.serpentine = document.getElementById('UseSerpentine').checked;
 
-gId("errDiffsMatrixInput").addEventListener("input", function () {
-  try {
-    errDiffsMatrixInput = JSON.parse(gId("errDiffsMatrixInput").value);
-  } catch (e) {
-    printLog(e, 1, "red", "red");
+    const a = document.getElementById('Dither').value;
+    if (a === 'ErrorDiffusion' || a === 'VariableErrorDiffusion')
+      CompileClassMap();
+  }
+);
+
+const ditherPresets = {
+  'None': [],
+
+  'Ordered': [
+    { value: 'Threshold', label: 'Threshold' },
+    { value: 'Bayer2', label: 'Bayer 2x2' },
+    { value: 'Bayer4', label: 'Bayer 4x4' },
+    { value: 'Bayer8', label: 'Bayer 8x8' },
+    { value: 'Bayer16', label: 'Bayer 16x16' },
+    { value: 'Cluster', label: 'Cluster' },
+    { value: 'Fishnet', label: 'Fishnet' },
+    { value: 'Halftone', label: 'Halftone' },
+    { value: 'HatchLeft', label: 'Hatch Left' },
+    { value: 'HatchRight', label: 'Hatch Right' },
+    { value: 'HatchVertical', label: 'Hatch Vertical' },
+    { value: 'HatchHorizontal', label: 'Hatch Horizontal' },
+    { value: 'CrossHatchLeft', label: 'Cross Hatch Left' },
+    { value: 'CrossHatchRight', label: 'Cross Hatch Right' },
+    { value: 'CrossHatchVertical', label: 'Cross Hatch Vertical' },
+    { value: 'CrossHatchHorizontal', label: 'Cross Hatch Horizontal' },
+    { value: 'ZigZag4', label: 'Zig Zag 4' },
+    { value: 'ZigZag8', label: 'Zig Zag 8' },
+    { value: 'ZigZag16', label: 'Zig Zag 16' },
+    { value: 'Dot4', label: 'Dot 4' },
+    { value: 'Dot8', label: 'Dot 8' },
+    { value: 'Rylander', label: 'Rylander' },
+  ],
+
+  'Arithmetic': [
+    { value: 'ArithmeticAddConvariant', label: 'Arithmetic ADD Convariant' },
+    { value: 'ArithmeticXorConvariant', label: 'Arithmetic XOR Convariant' },
+    { value: 'Halftone', label: 'Halftone' },
+  ],
+
+  'ErrorDiffusion': [
+    { value: 'FloydSteinberg', label: 'Floyd-Steinberg' },
+    { value: 'FalseFloydSteinberg', label: 'False Floyd-Steinberg' },
+    { value: 'Fan', label: 'Fan' },
+    { value: 'ShiauFan', label: 'Shiau-Fan' },
+    { value: 'ShiauFan2', label: 'Shiau-Fan 2' },
+    { value: 'Atkinson', label: 'Atkinson' },
+    { value: 'Burkes', label: 'Burkes' },
+    { value: 'JavisJudiceNinke', label: 'Javis Judice Ninke' },
+    { value: 'Stucki', label: 'Stucki' },
+    { value: 'Sierra', label: 'Sierra' },
+    { value: 'SierraLite', label: 'Sierra Lite' },
+    { value: 'Sierra2', label: 'Sierra 2' },
+    { value: 'Box', label: 'Box' },
+    { value: 'Diagonal', label: 'Diagonal' },
+    { value: 'Pigeon', label: 'Pigeon' },
+    { value: 'Kist', label: 'Kist' },
+    { value: 'Arce', label: 'Arce' },
+    { value: 'Xot', label: 'Xot' },
+    { value: 'TwoD', label: '2D' },
+    { value: 'OneD', label: '1D' },
+    { value: 'Knuth', label: 'Knuth' },
+    { value: 'Box3', label: 'Box 3' },
+    { value: 'Box5', label: 'Box 5' },
+    { value: 'Box7', label: 'Box 7' },
+    { value: 'Box9', label: 'Box 9' },
+    { value: 'Cross', label: 'Cross' },
+    { value: 'DiagonalCross', label: 'Diagonal Cross' },
+  ],
+
+  'VariableErrorDiffusion': [
+    { value: 'Ostromoukhov', label: 'Ostromoukhov' },
+    { value: 'ZhouFang', label: 'Zhou-Fang' },
+  ],
+};
+
+document.getElementById('Dither').addEventListener('change',
+  function () {
+    const a = document.getElementById('Presets');
+
+    a.innerHTML = '';
+
+    const b = document.getElementById('Dither').value;
+
+    if (b === 'DotDiffusion') {
+      let gr = document.createElement('optgroup');
+      gr.label = 'Class Matrix';
+
+      for (const option of ditherPresets['Ordered'])
+        gr.appendChild(new Option(option.label, option.value));
+
+      a.appendChild(gr);
+
+      gr = document.createElement('optgroup');
+      gr.label = 'Diffuse Matrix';
+
+      for (const option of ditherPresets['ErrorDiffusion'])
+        gr.appendChild(new Option(option.label, option.value));
+
+      a.appendChild(gr);
+    }
+    else {
+      for (const option of ditherPresets[b])
+        a.add(new Option(option.label, option.value));
+    }
+
+    if (b === 'Ordered') SetOrderedDitherPreset();
+    else if (b === 'Arithmetic') SetArithmeticDitherPresets();
+    else if (b === 'ErrorDiffusion' || b === 'VariableErrorDiffusion') SetErrorDiffsPreset();
+  }
+);
+
+document.getElementById('Presets').addEventListener('change',
+  function () {
+    const b = document.getElementById('Dither').value;
+
+    if (b === 'Ordered') SetOrderedDitherPreset();
+    else if (b === 'Arithmetic') SetArithmeticDitherPresets();
+    else if (b === 'ErrorDiffusion' || b === 'VariableErrorDiffusion') SetErrorDiffsPreset();
+  }
+);
+
+document.getElementById('PrimeTextarea').addEventListener('input',
+  function () {
+    const b = document.getElementById('Dither').value;
+
+    if (b === 'Ordered') CompileOrderedDitherMatrix();
+    else if (b === 'ErrorDiffusion' || b === 'VariableErrorDiffusion') CompileErrorDiffusionMatrices();
+  }
+);
+
+/*
+// Improved Dot Diffusion For Image Halftoning
+// https://web.archive.org/web/20240720181431/https://apps.dtic.mil/sti/pdfs/ADA368062.pdf
+
+ImproveClassMatrix = function (gray, candidates1, candidates2, sigma) {
+  const classHeight = matrixInput.length;
+  const classWidth = matrixInput[0].length;
+
+  const sqSz = classWidth * classHeight;
+
+  const kernelArray = BlueNoiseFloat64.getGaussianKernel(sigma);
+  const kernelWidth = (Math.ceil(3 * sigma) << 1) + 1;
+
+  const ditheredArray = new Float32Array(sqSz);
+  const errorArray = new Float32Array(sqSz);
+
+  ditheredArray.fill(gray);
+  dotDiffsClassInputLUTCreateSimple(classWidth, classHeight);
+  dotDiffsSimple(ditheredArray, classWidth, classHeight, sqSz);
+
+  for (let i = 0; i < sqSz; i++) {
+    errorArray[i] = gray - ditheredArray[i];
   }
 
-  errDiffsAutoDivWrapper();
-  errDiffsKernel = parseKernelErrDiffs(errDiffsMatrixInput, errDiffsDivisionInput);
+  let currentCost = BlueNoiseUtils.computeEnergyWrapAround(
+    errorArray,
+    classWidth,
+    classHeight,
+    kernelArray,
+    kernelWidth,
+    kernelWidth
+  );
 
-  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
-});
+  let improved = true;
 
-gId("errDiffsDivisionInput").addEventListener("input", function () {
-  errDiffsAutoDivWrapper();
-  errDiffsKernel = parseKernelErrDiffs(errDiffsMatrixInput, errDiffsDivisionInput);
+  breaked: while (improved) {
+    improved = false;
 
-  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
-});
+    for (let candidate1 = 0; candidate1 < candidates1; candidate1++) {
+      const candidateIdx1 = (Math.random() * sqSz) | 0;
 
-gId("errDiffsAutoDiv").addEventListener("input", function () {
-  errDiffsAutoDiv = gId("errDiffsAutoDiv").checked;
-  errDiffsAutoDivWrapper();
-  errDiffsKernel = parseKernelErrDiffs(errDiffsMatrixInput, errDiffsDivisionInput);
+      for (let candidate2 = 0; candidate2 < candidates2; candidate2++) {
+        let candidateIdx2 = (Math.random() * sqSz) | 0;
 
-  if (ditherDropdown.value === "dotDiffs") dotDiffsClassInputLUTCreate();
-});
+        while (candidateIdx1 === candidateIdx2) candidateIdx2 = (Math.random() * sqSz) | 0;
 
-gId("varErrDiffsMatrixInput").addEventListener("input", function () {
-  try {
-    varErrDiffsMatrixInput = JSON.parse(gId("varErrDiffsMatrixInput").value);
-  } catch (e) {
-    printLog(e, null, "red", "red");
+        const tmp = dotDiffsClassMatrixCanvasLUT[candidateIdx1];
+        dotDiffsClassMatrixCanvasLUT[candidateIdx1] =
+          dotDiffsClassMatrixCanvasLUT[candidateIdx2];
+        dotDiffsClassMatrixCanvasLUT[candidateIdx2] = tmp;
+
+        ditheredArray.fill(gray);
+        dotDiffsSimple(ditheredArray, classWidth, classHeight, sqSz);
+
+        for (let i = 0; i < sqSz; i++) {
+          errorArray[i] = gray - ditheredArray[i];
+        }
+
+        const cost = BlueNoiseUtils.computeEnergyWrapAround(
+          errorArray,
+          classWidth,
+          classHeight,
+          kernelArray,
+          kernelWidth,
+          kernelWidth
+        );
+
+        if (cost > currentCost) {
+          currentCost = cost;
+          improved = true;
+
+          continue breaked;
+        }
+
+        dotDiffsClassMatrixCanvasLUT[candidateIdx2] =
+          dotDiffsClassMatrixCanvasLUT[candidateIdx1];
+        dotDiffsClassMatrixCanvasLUT[candidateIdx1] = tmp;
+      }
+    }
   }
 
-  varErrDiffsKernel = parseKernelVarErrDiffs(varErrDiffsMatrixInput);
-});
+  for (let y = 0; y < classHeight; y++) {
+    const yOffs = y * classWidth;
 
-gId("useMirror").addEventListener("input", function () {
-  useMirror = gId("useMirror").checked;
-  varErrDiffsKernel = parseKernelVarErrDiffs(varErrDiffsMatrixInput);
-});
-
-
-function disableAll() {
-  gId("matrix").classList.add("disabled");
-  gId("uploadDitherImage").classList.add("disabled");
-  gId("arithmetic").classList.add("disabled");
-  gId("errDiffs").classList.add("disabled");
-  gId("varErrDiffs").classList.add("disabled");
-  gId("matrixThreshDisp").classList.add("disabled");
-  gId("arithmeticDisp").classList.add("disabled");
-  gId("errDiffsInputDisp").classList.add("disabled");
-  gId("varErrDiffsInputDisp").classList.add("disabled");
-  gId("lvlsDisp").classList.add("disabled");
-  gId("errLvlsDisp").classList.add("disabled");
-  gId("serpentineDisp").classList.add("disabled");
-  gId("bufferDisp").classList.add("disabled");
-  gId("mirrorDisp").classList.add("disabled");
-}
-
-gId("dither").addEventListener("change", function () {
-  let dropdownValue = gId("dither").value;
-  if (dropdownValue === "none") {
-    disableAll();
-  } else if (dropdownValue === "matrixThreshold") {
-    disableAll();
-    gId("matrix").classList.remove("disabled");
-    gId("uploadDitherImage").classList.remove("disabled");
-    gId("matrixThreshDisp").classList.remove("disabled");
-    gId("lvlsDisp").classList.remove("disabled");
-  } else if (dropdownValue === "arithmetic") {
-    disableAll();
-    gId("arithmetic").classList.remove("disabled");
-    gId("arithmeticDisp").classList.remove("disabled");
-    gId("lvlsDisp").classList.remove("disabled");
-    gId("linearDisp").classList.remove("disabled");
-  } else if (dropdownValue === "errDiffs") {
-    disableAll();
-    gId("errDiffs").classList.remove("disabled");
-    gId("errDiffsInputDisp").classList.remove("disabled");
-    gId("lvlsDisp").classList.remove("disabled");
-    gId("errLvlsDisp").classList.remove("disabled");
-    gId("linearDisp").classList.remove("disabled");
-    gId("serpentineDisp").classList.remove("disabled");
-    gId("bufferDisp").classList.remove("disabled");
-  } else if (dropdownValue === "varErrDiffs") {
-    disableAll();
-    gId("varErrDiffs").classList.remove("disabled");
-    gId("varErrDiffsInputDisp").classList.remove("disabled");
-    gId("lvlsDisp").classList.remove("disabled");
-    gId("errLvlsDisp").classList.remove("disabled");
-    gId("linearDisp").classList.remove("disabled");
-    gId("serpentineDisp").classList.remove("disabled");
-    gId("bufferDisp").classList.remove("disabled");
-    gId("mirrorDisp").classList.remove("disabled");
-  } else if (dropdownValue === "dotDiffs") {
-    disableAll();
-    gId("matrix").classList.remove("disabled");
-    gId("uploadDitherImage").classList.remove("disabled");
-    gId("matrixThreshDisp").classList.remove("disabled");
-
-    gId("errDiffs").classList.remove("disabled");
-    gId("errDiffsInputDisp").classList.remove("disabled");
-    gId("lvlsDisp").classList.remove("disabled");
-    gId("errLvlsDisp").classList.remove("disabled");
-    gId("linearDisp").classList.remove("disabled");
-    gId("bufferDisp").classList.remove("disabled");
+    for (let x = 0; x < classWidth; x++) {
+      matrixInput[y][x] = dotDiffsClassMatrixCanvasLUT[yOffs + x];
+    }
   }
-});
+};
+*/
+
 
 (function () {
-  sliderInputSync(gId("rLvlsRange"), gId("rLvlsInput"), "rLvls", 2, "input");
-  sliderInputSync(gId("gLvlsRange"), gId("gLvlsInput"), "gLvls", 2, "input");
-  sliderInputSync(gId("bLvlsRange"), gId("bLvlsInput"), "bLvls", 2, "input");
-  rLvls--;
-  gLvls--;
-  bLvls--;
-  colorLimitArray = [rLvls, gLvls, bLvls];
+  gCtx.rCount = SliderInputSync(document.getElementById('RCountSlider'), document.getElementById('RCountInput'), 2, 'input');
+  gCtx.gCount = SliderInputSync(document.getElementById('GCountSlider'), document.getElementById('GCountInput'), 2, 'input');
+  gCtx.bCount = SliderInputSync(document.getElementById('BCountSlider'), document.getElementById('BCountInput'), 2, 'input');
 
-  sliderInputSync(gId("rErrLvlsRange"), gId("rErrLvlsInput"), "rErrLvls", 1, "input");
-  sliderInputSync(gId("gErrLvlsRange"), gId("gErrLvlsInput"), "gErrLvls", 1, "input");
-  sliderInputSync(gId("bErrLvlsRange"), gId("bErrLvlsInput"), "bErrLvls", 1, "input");
-  colorErrArray = [rErrLvls, gErrLvls, bErrLvls];
+  CompilePalette();
 
-  useLinear = gId("useLinear").checked ? true : false;
-  useSerpentine = gId("useSerpentine").checked ? true : false;
-  useBuffer = gId("useBuffer").checked ? true : false;
-  buffer = gId("buffer").value;
-  autoDiv = gId("autoDiv").checked;
-  errDiffsAutoDiv = gId("errDiffsAutoDiv").checked;
-  useMirror = gId("useMirror").checked;
-  autoDivWrapper();
-  errDiffsAutoDivWrapper();
-
-  errDiffsBuffer = [];
-  setErrDiffsTarget = (d) => {
-    errDiffsBufferTarget = d;
-  };
-  if (useBuffer) {
-    getBufferValue = (i, c) => errDiffsBuffer[i + c]; // read from buffer
-  } else {
-    getBufferValue = () => 0; // always return 0
-  }
+  useLinear = document.getElementById('UseLinear').checked;
+  useSerpentine = document.getElementById('UseSerpentine').checked;
 })();
