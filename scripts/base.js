@@ -9,10 +9,17 @@ SpeedsLog = function (msg) {
 
 UploadImageHandler = function (event) {
   const file = event.target.files[0];
-  if (file)
+  if (file) {
     gCtx.image.src = URL.createObjectURL(file);
 
-}
+    gCtx.image.onload = function () {
+      gCtx.width = gCtx.image.width, gCtx.height = gCtx.image.height;
+      gCtx.canvas.width = gCtx.width, gCtx.canvas.height = gCtx.height;
+
+      CompileClassMap();
+    }
+  }
+};
 
 ChangeCanvasSize = function () {
   const width = Number(document.getElementById("CanvasWidth").value);
